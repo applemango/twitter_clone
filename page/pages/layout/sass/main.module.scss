@@ -1,11 +1,17 @@
 .main {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     display: flex;
 }
 ._ {
+    width: 100%;
     display: flex;
+    justify-content: flex-end;
 }
 .center {
     width: 100%;
+    margin: 0 20px;
+    border-right: 1px solid #fafafa;
+    border-left: 1px solid #fafafa;
+    min-height: 100vh;
 }

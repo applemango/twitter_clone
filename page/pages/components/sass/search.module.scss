@@ -1,0 +1,25 @@
+._ {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0px 15px;
+    padding-right: 0;
+    margin: 5px 0;
+    background-color: #eff4f4;
+    border-radius: 100px;
+    .icon svg {
+        fill: #898989;
+    }
+    .input {
+        height: 42px;
+        margin: 0;
+        border: none;
+        padding: 0;
+        outline: none;
+        background-color: #eff4f4;
+        border-top-right-radius: 100px;
+        border-bottom-right-radius: 100px;
+        padding-left: 12px;
+        font-size: 14px;
+    }
+}

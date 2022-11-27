@@ -9,13 +9,15 @@ const Main = ({
     right? : any | null | boolean // ,,
 }) => {
     return <div className={styles.main}>
-        <MenuLeft />
+        <div style={{width: 200}}>
+            <MenuLeft />
+        </div>
         <div className={styles._}>
             <div className={styles.center}>
                 {children}
             </div>
             { right !== false ?
-                right ?? <MenuRight /> : null
+                right ?? <div style={{width: 600}}><MenuRight /></div> : null
             }
         </div>
     </div>
