@@ -3,6 +3,7 @@ from secrets import token_hex, token_urlsafe
 import secrets
 from flask import Flask,jsonify,request, session
 from flask import send_from_directory
+from flask.wrappers import Request
 from datetime import datetime, timedelta, timezone
 from sqlalchemy import func
 from flask_jwt_extended import get_current_user
@@ -16,7 +17,7 @@ from flask_jwt_extended import decode_token
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
 from flask_socketio import ConnectionRefusedError
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 from werkzeug.utils import secure_filename
 
 from os import path
@@ -45,6 +46,112 @@ class User(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     password = db.Column(db.String())
+    icon = db.Column(db.String(), default="default")
+    admin = db.Column(db.Boolean(), default=False)
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def to_object(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "icon": self.icon,
+            "admin": self.admin,
+        }
+
+class Tweet(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    text = db.Column(db.String())
+    content = db.Column(db.String())
+    content_type = db.Column(db.String())
+    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    def to_object(self):
+        user = User.query.get(self.user_id)
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "user_name": user.name,
+            "user_icon": user.icon,
+            "text": self.text,
+            "content": self.content,
+            "content_type": self.content_type,
+            "timestamp": self.timestamp
+        }
+
+@app.route("/tweets", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_tweet_post():
+    text = request_data(request, "text")
+    content_type = request_data(request, "content_type")
+    content = request_data(request, "content")
+    
+    tweet = Tweet(
+        user_id = request_user(),
+        text = text,
+        content = content,
+        content_type = content_type,
+    )
+
+    db.session.add(tweet)
+    db.session.commit()
+    return jsonify({"tweet": tweet.to_object()})
+
+@app.route("/tweets", methods=["GET"])
+@cross_origin()
+@cross_origin()
+def route_tweet_get():
+    tweets = get_tweets(
+        start = request_arg_int(request, "start"),
+        limit = request_arg_int(request, "limit")
+    ).all()
+    return jsonify({"data": to_objects(tweets)})
+
+###########################
+###########################
+###########################
+def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
+    start = None,
+    limit = None,
+    user_id = None
+):
+    tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
+        .filter(Tweet.user_id == user_id if user_id else True)
+    if limit:
+        tweets = tweets.limit(limit)
+    if start:
+        tweets = tweets[start:]
+    return tweets
+
+def to_objects(data: list):
+    result = []
+    for d in data:
+        result.append(d.to_object())
+    return result
+
+def request_arg(request: Request, name: str):
+    try:
+        return request.args.get(name)
+    except:
+        return None
+
+def request_arg_int(request: Request, name: str):
+    try:
+        r = request.args.get(name)
+        if r:
+            return int(r)
+    except:
+        return None
+    return None
+
+def request_data(request: Request, name: str):
+    return json.loads(json.loads(request.get_data().decode('utf-8'))["body"])[name]
+
+def request_user():
+    return current_user.id  # type: ignore
 
 ############################################################################################################################################################
 ############################################################################################################################################################
@@ -124,6 +231,15 @@ def token_block(_jwt_header, jwt_data):
         return True
     return False
 
-
 if __name__ == '__main__':
+    #db.drop_all()
+    #db.create_all()
+    #apple = User(name="apple")
+    #apple.set_password(password="apple")
+    #mango = User(name="mango")
+    #mango.set_password(password="mango")
+    #db.session.add(apple)
+    #db.session.add(mango)
+    #db.session.commit()
+
     app.run(debug=True, host='0.0.0.0', port=5000)

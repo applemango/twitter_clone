@@ -1,20 +1,20 @@
-import styles from "./usericon.module.scss"
+import styles from "./sass/usericon.module.scss"
 const UserIcon = ({
     width = 32,
-    hight = 32,
+    height = 32,
     url = ""
 }:{
     width?: number
-    hight?: number
+    height?: number
     url?: string
 }) => {
     const loader = () => {
         return
     }
     return <div>
-        { url ? <div style={{
+        { !url ? <div style={{
             width: width,
-            hight: hight
+            height: height
         }} className={styles.usericonnone} /> : <div />}
     </div>
 }
