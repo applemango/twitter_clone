@@ -32,9 +32,9 @@ export const TweetBottomOneLine = ({
         </div>
     }
     return <div className={styles.TweetBottomOneLine}>
-        <Button icon={IconMessage()} text={"0"}/>
-        <Button icon={IconReTweet()} text={"0"}/>
-        <Button icon={IconLike()} text={"0"}/>
+        <Button icon={IconMessage()} text={"5000"}/>
+        <Button icon={IconReTweet()} text={"10k"}/>
+        <Button icon={IconLike()} text={"100.0k"}/>
         <Button icon={IconShare()} text={""}/>
     </div>
 }

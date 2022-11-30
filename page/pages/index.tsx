@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useState } from 'react'
+import { TypeTweet } from '../lib/types/type'
 import styles from '../styles/Home.module.css'
 import { ComponentsBorderBottom } from './components/components/components'
 import Timeline from './components/timeline'
@@ -7,6 +9,7 @@ import TweetForm from './components/tweetform'
 import Main from './layout/main'
 
 export default function Home() {
+  const [tweets, setTweets] = useState<Array<TypeTweet>>([])
   return (
     <div>
       <Main children={<ComponentsBorderBottom>
@@ -15,9 +18,9 @@ export default function Home() {
             fontSize: 20,
             marginTop: 0
           }}>Home</h1>
-          <TweetForm />
+          <TweetForm setTweets={setTweets} />
         </div>
-        <Timeline />
+        <Timeline tweets={tweets} setTweets={setTweets} />
       </ComponentsBorderBottom>} />
     </div>
   )

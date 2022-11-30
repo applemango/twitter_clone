@@ -1,6 +1,7 @@
 import { TypeTweet } from "../../lib/types/type"
 import { TweetIconLeft } from "./components/components"
 import styles from "./sass/tweet.module.scss"
+import TweetContent from "./tweetcontent"
 import { TweetBottomOneLine, TweetTopOneLine } from "./tweetinfo"
 
 const Tweet = ({
@@ -12,6 +13,7 @@ const Tweet = ({
         <TweetIconLeft>
             <TweetTopOneLine tweet={tweet} />
             <TweetText tweet={tweet} />
+            <TweetContent content={tweet.content} contentType={tweet.content_type} />
             <TweetBottomOneLine tweet={tweet} />
         </TweetIconLeft>
     </div>

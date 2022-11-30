@@ -7,7 +7,7 @@ export const post_tweet = async (text: string, content: string = "", content_typ
             content: content,
             content_type: content_type,
         })
-        return res
+        return res.data.tweet
     } catch (e) {
     }
 }

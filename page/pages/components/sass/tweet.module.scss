@@ -1,6 +1,7 @@
 .main {
     padding: 16px;
     .text {
+        margin: 4px 0 8px 0;
         p {
             margin: 0;
         }
@@ -40,18 +41,21 @@
         align-items: center;
     }
     .button div {
-        width: 32px;
-        height: 32px;
+        width: fit-content;
+        height: fit-content;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 2px;
         border-radius: 100%;
         &:hover {
+            outline: 5px solid #eee;
             background-color: #eee;
         }
     }
     p {
+        color: #777;
+        font-size: 12px;
         height: fit-content;
         margin: 0;
         margin-left: 12px;

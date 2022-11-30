@@ -24,6 +24,7 @@ from os import path
 import sys
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+uploads_file_path = os.path.join(basedir, 'contents')
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
@@ -81,6 +82,12 @@ class Tweet(db.Model): # type: ignore
             "timestamp": self.timestamp
         }
 
+class Image(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    path = db.Column(db.String(), nullable=False)
+    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 @app.route("/tweets", methods=["POST"])
 @cross_origin()
 @jwt_required()
@@ -109,6 +116,37 @@ def route_tweet_get():
         limit = request_arg_int(request, "limit")
     ).all()
     return jsonify({"data": to_objects(tweets)})
+
+@app.route("/tweets/image", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_tweet_image_post():
+    if "file" not in request.files:
+        return jsonify("file not found"), 400
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify("file not fined"), 400
+    if file.filename and file and allowed_file(file.filename):
+        random_str = generate_random_str(15)
+        filename = secure_filename(random_str+"_"+file.filename)
+        file.save(os.path.join(uploads_file_path, filename))
+        user = request_user()
+        db.session.add(Image(
+            path=filename
+            ,user_id=user
+        ))
+        db.session.commit()
+        return jsonify({"path": filename}),200
+    return jsonify("file not supported"), 400
+
+@app.route("/tweets/image/<path>", methods=["GET"])
+@cross_origin()
+def route_tweet_image_get(path):
+    image = Image.query.filter(Image.path == path).first()
+    if not image:
+        return jsonify("image not found"), 404
+    return send_from_directory(uploads_file_path, path)
+    pass
 
 ###########################
 ###########################
@@ -152,6 +190,15 @@ def request_data(request: Request, name: str):
 
 def request_user():
     return current_user.id  # type: ignore
+
+def generate_random_str(length: int) -> str:
+    a,r = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",""
+    for i in range(length):r += random.choice(a)
+    return r
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 ############################################################################################################################################################
 ############################################################################################################################################################
@@ -232,14 +279,5 @@ def token_block(_jwt_header, jwt_data):
     return False
 
 if __name__ == '__main__':
-    #db.drop_all()
-    #db.create_all()
-    #apple = User(name="apple")
-    #apple.set_password(password="apple")
-    #mango = User(name="mango")
-    #mango.set_password(password="mango")
-    #db.session.add(apple)
-    #db.session.add(mango)
-    #db.session.commit()
 
     app.run(debug=True, host='0.0.0.0', port=5000)
