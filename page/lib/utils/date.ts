@@ -19,5 +19,5 @@ export const dateConversion = (date:Date | number | string): string => {
     if (hours   >= 1) {return `${hours  }h`/*hours ago  `*/}
     if (minutes >= 1) {return `${minutes}min`/*minutes ago`*/}
     if (seconds >= 1) {return `${seconds}s`/*seconds ago`*/}
-    return "0 seconds ago"
+    return "1e308s"
 }

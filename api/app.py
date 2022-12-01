@@ -53,7 +53,6 @@ class User(db.Model):  # type: ignore
         self.password = generate_password_hash(password)
     def check_password(self, password):
         return check_password_hash(self.password, password)
-
     def to_object(self):
         return {
             "id": self.id,
@@ -87,6 +86,31 @@ class Image(db.Model): # type: ignore
     path = db.Column(db.String(), nullable=False)
     timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Message(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    to = db.Column(db.Integer, db.ForeignKey("user.id"))
+    send = db.Column(db.Integer, db.ForeignKey("user.id")) # from
+    body = db.Column(db.String)
+    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    file = db.Column(db.String, default="")
+    def to_object(self):
+        to = User.query.get(self.to)
+        send = User.query.get(self.send)
+        return {
+            "id": self.id,
+            "to": to.to_object(),
+            "send": send.to_object(),
+            "body": self.body,
+            "timestamp": self.timestamp,
+            "file": self.file,
+        }
+    def to_object_safe(self):
+        data = self.to_object()
+        data["timestamp"] = str(self.timestamp)
+        return data
+
+
 
 @app.route("/tweets", methods=["POST"])
 @cross_origin()
@@ -146,7 +170,54 @@ def route_tweet_image_get(path):
     if not image:
         return jsonify("image not found"), 404
     return send_from_directory(uploads_file_path, path)
-    pass
+
+@app.route("/messages/user", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_messages_user_get():
+    user = User.query.filter(User.id != request_user()).all()
+    return jsonify({"data": to_objects(user)})
+
+@app.route("/messages/<user>", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_messages_get(user):
+    user = int(user)
+    me = request_user()
+    messages = Message.query.filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me))
+    return jsonify({"data": to_objects(messages)})
+
+###########################
+###########################
+###########################
+@socketIo.on('connect')
+def connect():
+    if not token_auth(request.args.get('token')):
+        raise ConnectionRefusedError("Token not found")
+    token = get_token_data(request.args.get('token'))
+    if not token:
+        raise ConnectionRefusedError("Token not found")
+    join_room(str(token["sub"]))
+
+@socketIo.event
+def socket_send_message_to_user(message):
+    if not token_auth(request.args.get('token')):
+        raise RuntimeError("Token not found")
+    token_data = decode_token(request.args.get('token'))  # type: ignore
+    u: User = User.query.get(int(token_data["sub"]))
+    t: User = User.query.get(int(message["to"]))
+    if not t or not u:
+        return jsonify("user not found"), 403
+    msg = Message(
+        to=t.id,
+        send=u.id,
+        body=message["body"],
+        file= message["file"] if message["file"] else None,
+    )
+    db.session.add(msg)
+    db.session.commit()
+    emit("message_from_user", msg.to_object_safe(), to=str(t.id))
+    emit("message_to_user", msg.to_object_safe(), to=str(u.id))
 
 ###########################
 ###########################
@@ -199,6 +270,20 @@ def generate_random_str(length: int) -> str:
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def token_auth(jwt):
+    try:
+        if not decode_token(jwt):
+            return False
+    except:
+        return False
+    return True
+
+def get_token_data(jwt):
+    if not token_auth(jwt):
+        return False
+    data = decode_token(jwt)
+    return data
 
 ############################################################################################################################################################
 ############################################################################################################################################################

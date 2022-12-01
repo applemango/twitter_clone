@@ -14,22 +14,23 @@ const Icon2 =            (strokeWidth: number = 1.5) => <svg xmlns="http://www.w
 const MenuLeft = () => {
     return <div className={styles.main}>
         <div>
-            <ButtonLink active={false} link={"/"} icon={Icon2} />
+            <ButtonLink color_hover={"#00abfb25"} active={false} link={"/"} icon={Icon2} />
             <ButtonLink link={"/"} icon={IconHome} children="home" />
             <ButtonLink link={"/explore"} icon={IconExplore} children="Explore" />
             {/*<ButtonLink link={"/notifications"} icon={IconNotification()} children="Notifications" />*/}
             <ButtonLink link={"/messages"} icon={IconMessages} children="Messages" />
             {/*<ButtonLink link={"/bookmarks"} icon={IconBookmark()} children="Bookmarks" />*/}            
             {/*<ButtonLink link={"/lists"} icon={IconList()} children="Lists" />*/}
-            <ButtonLink active={false} link={"/"} icon={IconProfile} children="Profiles" />
-            <ButtonLink active={false} link={"/"} icon={IconMore} children="More" />
+            <ButtonLink link={"/@/apple"} icon={IconProfile} children="Profiles" />
+            <Button icon={IconMore(1.5)}>
+                <p style={{fontWeight: 400}}>More</p>
+            </Button>
         </div>
         <div></div>
     </div>
 }
 
 type button = {
-    color?: string
     color_hover?: string
     link?: string
     children?: any
@@ -38,7 +39,6 @@ type button = {
 }
 
 const ButtonLink = ({
-    color,
     color_hover,
     children,
     icon,
@@ -46,21 +46,20 @@ const ButtonLink = ({
     active
 }:button) => {
     const router = useRouter()
-    const isActive = router.pathname == link && active != false
+    const isActive = router.asPath == link && active != false
     return <Link href={link ?? "/"}>
-        <Button color={color} color_hover={color_hover} icon={icon ? icon(isActive ? 2 : 1.5) : ""}>
+        <Button color_hover={color_hover} icon={icon ? icon(isActive ? 2 : 1.5) : ""}>
             { children && <p style={{fontWeight: isActive ? 500 : 400}}>{children}</p>}
         </Button>
     </Link>
 }
 
 const Button = ({
-    color = "transparent",
     color_hover = "#eee",
     children,
     icon
 }:button) => {
-    return <div className={styles.button}>
+    return <div style={{backgroundColor: color_hover}} className={styles.button}>
         {children && children}
         {icon && <div className={styles.icon}>{icon}</div>}
     </div>

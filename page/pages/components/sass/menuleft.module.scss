@@ -1,3 +1,6 @@
+.main {
+    position: fixed;
+}
 .button {
     padding: 8px 12px;
     border-radius: 100px;
@@ -17,9 +20,22 @@
             left: 5px;
         }
     }
-    &:hover {
-        background-color: #eee;
+    &:not(:hover) {
+        background-color: transparent !important;
+        /*---
+          date: 2022-11-30
+          ---
+          hover時の背景色を変えるのはinline cssではjs|tsを追加するしかないが
+          めんどくさい(色んな意味で)ので通常時は背景色にcss側で!importantを常に付け
+          透明にしhover時にimportantを外す事でinline cssの優先度がcssの優先度を上回る
+          この方法で代用している
+
+          通常時の背景色を変える機会はこの先なさそうなのでこれでいく
+        */
     }
+    /*&:hover {
+        background-color: #eee;
+    }*/
     .icon {
         width: 38px;
         height: 38px;

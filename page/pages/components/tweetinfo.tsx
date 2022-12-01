@@ -20,6 +20,22 @@ export const TweetTopOneLine = ({
     </div>
 }
 
+export const InfoTopOneLine = ({
+    name,
+    timestamp
+}:{
+    name: string
+    timestamp: string | number | Date
+}) => {
+    return <div className={styles.TweetTopOneLine}>
+        <p className={styles.username}>{name}</p>
+        <div className={styles.info}>
+            <p>{"@" + name}</p>
+            <p>{dateConversion(timestamp)}</p>
+        </div>
+    </div>
+}
+
 export const TweetBottomOneLine = ({
     tweet
 }: {
