@@ -1,5 +1,8 @@
+import { getUrl } from "../../../lib/utils/main"
 import UserIcon from "../usericon"
 import styles from "./sass/components.module.scss"
+import Image from "next/image"
+import { useEffect } from "react"
 
 export const TweetIconLeft = ({
     children
@@ -39,4 +42,33 @@ export const ComponentsBorderBottom = ({
     </div>
 }
 
+export const Img = ({
+    name
+}:{
+    name: string
+}) => {
+    const l = getUrl(`/tweets/image/${name}`)
+    const loader = () => l
+    return <div className={styles.img}>
+            <Image
+                layout="fill"
+                objectFit="contain"
+                loader={loader}
+                src={l}
+                alt={name}
+                style={{
+                    objectFit: "cover"
+                }}
+            />
+    </div>
+}
 
+export const ButtonFollow = ({
+    onClick = () => {}
+}:{
+    onClick?: Function
+}) => {
+    return <button className={styles.ButtonFollow} onClick={(e: any) => onClick(e)}>
+        <p>Follow</p>
+    </button>
+}

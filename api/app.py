@@ -43,22 +43,55 @@ jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
+followers = db.Table('followers',
+    db.Column('follower', db.Integer, db.ForeignKey('user.id')),
+    db.Column('following', db.Integer, db.ForeignKey('user.id'))
+)
 class User(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     password = db.Column(db.String())
     icon = db.Column(db.String(), default="default")
+    header = db.Column(db.String(), default="default")
     admin = db.Column(db.Boolean(), default=False)
+    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    following = db.relationship(
+        'User', secondary=followers,
+        primaryjoin=(followers.c.follower == id),
+        secondaryjoin=(followers.c.following == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
     def set_password(self, password):
         self.password = generate_password_hash(password)
     def check_password(self, password):
         return check_password_hash(self.password, password)
+    def is_following(self, user):
+        return self.following.filter(
+            followers.c.following == user.id).count() > 0
+    def follow(self, user):
+        if not self.is_following(user):
+            self.following.append(user)
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.following.remove(user)
+    def follower(self):
+        return self.followers
+    def follower_count(self):
+        return self.follower().count()
+    def followed(self):
+        return self.following.filter(followers.c.follower == self.id)
+    def followed_count(self):
+        return self.followed().count()
     def to_object(self):
         return {
             "id": self.id,
             "name": self.name,
             "icon": self.icon,
+            "header": self.header,
+            "joined": self.timestamp,
             "admin": self.admin,
+            "follower": self.follower_count(),
+            "following": self.followed_count() 
         }
 
 class Tweet(db.Model): # type: ignore
@@ -141,6 +174,18 @@ def route_tweet_get():
     ).all()
     return jsonify({"data": to_objects(tweets)})
 
+@app.route("/tweets/<user>", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_tweet_user_get(user):
+    user = User.query.filter(User.name == user).first()
+    tweets = get_tweets(
+        start = request_arg_int(request, "start"),
+        limit = request_arg_int(request, "limit"),
+        user_id = user.id
+    ).all()
+    return jsonify({"data": to_objects(tweets)})
+
 @app.route("/tweets/image", methods=["POST"])
 @cross_origin()
 @jwt_required()
@@ -166,9 +211,11 @@ def route_tweet_image_post():
 @app.route("/tweets/image/<path>", methods=["GET"])
 @cross_origin()
 def route_tweet_image_get(path):
+    """debug
     image = Image.query.filter(Image.path == path).first()
     if not image:
         return jsonify("image not found"), 404
+    """
     return send_from_directory(uploads_file_path, path)
 
 @app.route("/messages/user", methods=["GET"])
@@ -186,6 +233,13 @@ def route_messages_get(user):
     me = request_user()
     messages = Message.query.filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me))
     return jsonify({"data": to_objects(messages)})
+
+@app.route("/user/<user>", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_user_get(user):
+    user = User.query.filter(User.name == user).first()
+    return jsonify({"data": user.to_object()})
 
 ###########################
 ###########################

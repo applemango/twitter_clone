@@ -30,7 +30,7 @@ const MessagesUser = ({
             }}>Messages</h1>
         </Header>
         <div>
-            { (users && users.length) && users.map((user: TypeUser, i:number) => (
+            { (users && !!users.length) && users.map((user: TypeUser, i:number) => (
                 <User onClick={(e: number) => onChange(e)} user={user} />
             ))}
         </div>

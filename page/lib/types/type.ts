@@ -2,7 +2,11 @@ export type TypeUser = {
     id: number
     name: string
     icon: string
+    header: string
     admin: boolean
+    following: number
+    follower: number
+    joined: string
 }
 
 export type TypeTweet = {

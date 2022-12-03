@@ -1,21 +1,25 @@
+import { Img } from "./components/components"
 import styles from "./sass/usericon.module.scss"
 const UserIcon = ({
     width = 32,
     height = 32,
-    url = ""
+    name = ""
 }:{
     width?: number
     height?: number
-    url?: string
+    name?: string
 }) => {
     const loader = () => {
         return
     }
     return <div>
-        { !url ? <div style={{
+        { !name ? <div style={{
             width: width,
             height: height
-        }} className={styles.usericonnone} /> : <div />}
+        }} className={styles.usericonnone} /> : <div style={{
+            width: width,
+            height: height
+        }} className={styles.usericon}><Img name={name} /></div>}
     </div>
 }
 export default UserIcon
