@@ -11,7 +11,7 @@ const UserHeader = ({
 }) => {
     return <div className={styles.header}>
         <div className={styles.header_image}>
-            <Img name={user.header} />
+            {user.header && <Img name={user.header} />}
         </div>
         <div className={styles.header_bottom}>
             <div className={styles.header_icon}>

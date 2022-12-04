@@ -1,13 +1,8 @@
 import { useRouter } from "next/router"
-import Head from 'next/head'
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { TypeTweet, TypeUser } from '../../lib/types/type'
-import styles from '../../styles/Home.module.css'
 import { ComponentsBorderBottom } from '.././components/components/components'
 import Headers from '.././components/headers'
-import Timeline from '.././components/timeline'
-import TweetForm from '.././components/tweetform'
 import Main from '.././layout/main'
 import UserProfile, { UserProfileMenu } from "../components/userprofile"
 import Tweets from "../components/tweets"
@@ -48,7 +43,7 @@ export default function User() {
       const r = async () => {
         if(!name || Array.isArray(name))
           return
-        setTweets(await req(`/tweets/${name}?start=${0}&end=${10}`))
+        setTweets(await req(`/tweets/user/${name}?start=${0}&end=${10}`))
       }
       r()
       const rs = async () => {

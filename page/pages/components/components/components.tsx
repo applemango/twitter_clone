@@ -3,15 +3,18 @@ import UserIcon from "../usericon"
 import styles from "./sass/components.module.scss"
 import Image from "next/image"
 import { useEffect } from "react"
+import { TypeTweet } from "../../../lib/types/type"
 
 export const TweetIconLeft = ({
+    name,
     children
 }:{
+    name?: string
     children: any
 }) => {
     return <div style={{display: "flex"}}>
         <div style={{marginRight: 10}}>
-            <UserIcon width={38} height={38} />
+            <UserIcon name={name} width={42} height={42} />
         </div>
         <div style={{
             width: "100%",
@@ -23,21 +26,23 @@ export const TweetIconLeft = ({
 }
 
 export const ComponentsBorderBottom = ({
-    children
+    children,
+    end = false
 }:{
-    children: Array<any> | any
+    children: Array<any> | any,
+    end?: boolean
 }) => {
     return <div>
         { children && children.length ? children.map((item: any, i: number) => (
             <>
                 <div key={i} style={{
-                    borderBottom: children.length - 1 > i ? "1px solid #eee" : ""
+                    borderBottom: children.length - 1 > i || end ? "1px solid #eee" : ""
                 }}>
                     {item}
                 </div>
             </>
         )) : children && <div style={{
-            //borderBottom: "1px solid #eee"
+            borderBottom: end ? "1px solid #eee": ""
         }}>{children}</div>}
     </div>
 }

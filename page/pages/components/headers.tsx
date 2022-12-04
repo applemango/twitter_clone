@@ -20,7 +20,8 @@ const Header = ({
     return <div ref={refs} style={{
         height: height ? height : "100%",
         width: "100%",
-        position: "relative"
+        position: "relative",
+        zIndex: 20
     }}>
         <div ref={ref} style={Object.assign({
             position: "fixed",

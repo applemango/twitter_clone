@@ -52,8 +52,8 @@ class User(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     password = db.Column(db.String())
-    icon = db.Column(db.String(), default="default")
-    header = db.Column(db.String(), default="default")
+    icon = db.Column(db.String(), default="")
+    header = db.Column(db.String(), default="")
     admin = db.Column(db.Boolean(), default=False)
     timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
     following = db.relationship(
@@ -82,6 +82,11 @@ class User(db.Model):  # type: ignore
         return self.following.filter(followers.c.follower == self.id)
     def followed_count(self):
         return self.followed().count()
+    def to_claims(self):
+        return {
+            "name": self.name,
+            "icon": self.icon
+        }
     def to_object(self):
         return {
             "id": self.id,
@@ -97,22 +102,70 @@ class User(db.Model):  # type: ignore
 class Tweet(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
     text = db.Column(db.String())
     content = db.Column(db.String())
     content_type = db.Column(db.String())
     timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    def likes(self):
+        return TweetLikes.query.filter(TweetLikes.tweet_id==self.id, TweetLikes.isLike==True)
+    def retweets(self):
+        return Tweet.query.filter(Tweet.text==None, Tweet.content_type=="retweet", Tweet.content==str(self.id))
+    def quoteTweets(self):
+        return Tweet.query.filter(Tweet.text!=None, Tweet.content_type=="retweet", Tweet.content==str(self.id))
+    def replays(self):
+        return Tweet.query.filter(Tweet.tweet_id==self.id)
     def to_object(self):
         user = User.query.get(self.user_id)
         return {
             "id": self.id,
+            "user": user.to_object(),
             "user_id": self.user_id,
             "user_name": user.name,
             "user_icon": user.icon,
             "text": self.text,
             "content": self.content,
             "content_type": self.content_type,
-            "timestamp": self.timestamp
+            "timestamp": self.timestamp,
+            "likes": self.likes().count(),
+            "retweets": self.retweets().count(),
+            "quoteTweets": self.quoteTweets().count(),
+            "replays": self.replays().count(),
+            "replay": to_objects(self.replays().all())
         }
+"""tweet == (retweet && replay)
+class TweetReplies(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
+    replay_id = db.Column(db.Integer, db.ForeignKey("tweet_replies.id"))
+    text = db.Column(db.String())
+    content = db.Column(db.String())
+    content_type = db.Column(db.String())
+    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
+    def replays(self):
+        return TweetReplies.query.filter(TweetReplies.replay_id==self.id)
+    def to_object(self):
+        user = User.query.get(self.user_id)
+        return {
+            "id": self.id,
+            "tweet_id": self.tweet_id,
+            "user": user.to_object(),
+            "text": self.text,
+            "content": self.content,
+            "content_type": self.content_type,
+            "timestamp": self.timestamp,
+            "replay": to_objects(self.replays().all())
+        }
+"""
+
+class TweetLikes(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    #type = db.Column(db.String, default="") need?
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
+    #replay_id = db.Column(db.Integer, db.ForeignKey("tweet_replies.id"))
+    isLike = db.Column(db.Boolean, default=True)
 
 class Image(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -141,9 +194,40 @@ class Message(db.Model): # type: ignore
     def to_object_safe(self):
         data = self.to_object()
         data["timestamp"] = str(self.timestamp)
+        data["to"]["joined"] = str(data["to"]["joined"])
+        data["send"]["joined"] = str(data["send"]["joined"])
         return data
 
+@app.route("/replays", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_replay_post():
+    id = int(request_data(request, "id"))
+    text = request_data(request, "text")
+    content_type = request_data(request, "content_type")
+    content = request_data(request, "content")
 
+    tweet = Tweet(
+        user_id = request_user(),
+        tweet_id = id,
+        text = text,
+        content = content,
+        content_type = content_type,
+    )
+    db.session.add(tweet)
+    db.session.commit()
+    return jsonify({"tweet": tweet.to_object()})
+
+@app.route("/replays/<id>", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_replays_get(id):
+    id = int(id)
+    tweet = get_tweets(
+        tweet_id = id,
+        replay = True
+    ).all()
+    return jsonify({"tweet": to_objects(tweet)})
 
 @app.route("/tweets", methods=["POST"])
 @cross_origin()
@@ -174,7 +258,7 @@ def route_tweet_get():
     ).all()
     return jsonify({"data": to_objects(tweets)})
 
-@app.route("/tweets/<user>", methods=["GET"])
+@app.route("/tweets/user/<user>", methods=["GET"])
 @cross_origin()
 @jwt_required()
 def route_tweet_user_get(user):
@@ -185,6 +269,15 @@ def route_tweet_user_get(user):
         user_id = user.id
     ).all()
     return jsonify({"data": to_objects(tweets)})
+
+@app.route("/tweets/<id>", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_tweet_id_get(id):
+    tweet = Tweet.query.get(int(id))
+    if not tweet:
+        return jsonify({"data": None})
+    return jsonify({"data": tweet.to_object()})
 
 @app.route("/tweets/image", methods=["POST"])
 @cross_origin()
@@ -231,7 +324,7 @@ def route_messages_user_get():
 def route_messages_get(user):
     user = int(user)
     me = request_user()
-    messages = Message.query.filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me))
+    messages = Message.query.filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me)).all()
     return jsonify({"data": to_objects(messages)})
 
 @app.route("/user/<user>", methods=["GET"])
@@ -279,10 +372,14 @@ def socket_send_message_to_user(message):
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     start = None,
     limit = None,
-    user_id = None
+    user_id = None,
+    replay = False,
+    tweet_id = None
 ):
     tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
-        .filter(Tweet.user_id == user_id if user_id else True)
+        .filter(Tweet.user_id == user_id if user_id else True) \
+        .filter(Tweet.tweet_id == None if not replay else True) \
+        .filter(Tweet.tweet_id == tweet_id if tweet_id else True)
     if limit:
         tweets = tweets.limit(limit)
     if start:
@@ -290,9 +387,14 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     return tweets
 
 def to_objects(data: list):
+    if not len(data):
+        return []
     result = []
     for d in data:
-        result.append(d.to_object())
+        try:
+            result.append(d.to_object())
+        except:
+            pass
     return result
 
 def request_arg(request: Request, name: str):
@@ -374,8 +476,9 @@ def create_token():
     user = User.query.filter_by(name=username).first()
     if user is None or not user.check_password(password):
         return jsonify({"msg": "Incorrect password or username"}), 401
-    access_token = create_access_token(identity=username)
-    refresh_token = create_refresh_token(identity=username)
+    claims = user.to_claims()
+    access_token = create_access_token(identity=username, additional_claims=claims)
+    refresh_token = create_refresh_token(identity=username, additional_claims=claims)
     return jsonify(access_token=access_token, refresh_token=refresh_token)
 
 @app.route("/refresh", methods=["POST"])
@@ -383,7 +486,9 @@ def create_token():
 @cross_origin()
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
+    user = User.query.get(identity)
+    claims = user.to_claims()
+    access_token = create_access_token(identity=identity, additional_claims=claims)
     return jsonify(access_token=access_token)
 
 @app.route("/logout", methods=["DELETE"])
