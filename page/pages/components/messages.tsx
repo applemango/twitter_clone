@@ -19,7 +19,7 @@ const Messages = ({
         })
     })
     return <div ref={ref} className={styles.messages}>
-        {(messages && messages.length) && messages.map((message: TypeMessage, i: number) => (
+        {(!!messages && !!messages.length) && messages.map((message: TypeMessage, i: number) => (
             <Message message={message} />
         ))}
     </div>

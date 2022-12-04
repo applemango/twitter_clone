@@ -35,7 +35,7 @@ const TweetReplayForm = ({
                     borderRadius: 100,
                     fontWeight: 600,
                     color: "#fff",
-                    backgroundColor: "#00abfb80"
+                    backgroundColor: "#1EA1F180"
                 }}>Replay</button>}
             </div>
             {content && <TweetContent content={content} contentType={contentType} />}

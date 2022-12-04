@@ -18,6 +18,8 @@ const MessagesChat = ({
     const [messages, setMessages] = useState<Array<TypeMessage>>()
     useEffect(() => {
         const r = async () => {
+            if(location==-1)
+                return
             const res = await get_messages(location)
             if(!res)
                 return
