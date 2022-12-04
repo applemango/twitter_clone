@@ -19,12 +19,12 @@ const Main = ({
         }
     })
     return <div className={styles.main}>
-        <div style={{width: 200}}>
+        <div className={styles.left}>
             <MenuLeft />
         </div>
         <div className={styles._}>
             { right !== false ?
-                right ?? <div style={{width: 350}}><MenuRight /></div> : null
+                right ?? <div className={styles.right}><MenuRight /></div> : null
             }
             <div style={{}} className={styles.center}>
                 {children}

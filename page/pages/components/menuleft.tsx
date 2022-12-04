@@ -2,11 +2,13 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { getToken, parseJwt } from "../../lib/res/token"
-import { IconBookmarks, IconBookmarksBold, IconExplore, IconExploreBold, IconHome, IconHomeBold, IconLists, IconMessages, IconMessagesBold, IconMore, IconNotifications, IconNotificationsBold, IconProfile, IconProfileBold, IconTwitter } from "./components/icon"
+import { IconBookmarks, IconBookmarksBold, IconExplore, IconExploreBold, IconHome, IconHomeBold, IconLists, IconListsBold, IconMessages, IconMessagesBold, IconMore, IconNotifications, IconNotificationsBold, IconProfile, IconProfileBold, IconTwitter } from "./components/icon"
 import styles from "./sass/menuleft.module.scss"
+import UserIcon from "./usericon"
+import { UserNameMini } from "./userinfo"
 const MenuLeft = () => {
     const [t,sT]=useState("")
-    useEffect(()=>sT(parseJwt(getToken(true))?.name),[])
+    useEffect(()=>{sT(parseJwt(getToken(true))?.name)},[])
     return <div className={styles.main}>
         <div>
             <ButtonLink color_hover={"#1EA1F125"} active={false} link={"/"} icon={IconTwitter} />
@@ -15,13 +17,27 @@ const MenuLeft = () => {
             <ButtonLink link={"/"??"/notifications"} iconActive={IconNotificationsBold} icon={IconNotifications} children="Notifications" />
             <ButtonLink link={"/messages"}           iconActive={IconMessagesBold} icon={IconMessages} children="Messages" />
             <ButtonLink link={"/"??"/bookmarks"}     iconActive={IconBookmarksBold} icon={IconBookmarks} children="Bookmarks" />
-            <ButtonLink link={"/"??"/lists"}         iconActive={IconLists} icon={IconLists} children="Lists" />
+            <ButtonLink link={"/"??"/lists"}         iconActive={IconListsBold} icon={IconLists} children="Lists" />
             <ButtonLink link={`/@/${t}`}       iconActive={IconProfileBold} icon={IconProfile} children="Profiles" />
             <Button icon={IconMore()}>
                 <p style={{fontWeight: 400}}>More</p>
             </Button>
+            <button className={styles.button_tweet}>
+                <p>Tweet</p>
+            </button>
         </div>
-        <div></div>
+        <User />
+    </div>
+}
+
+const User = () => {
+    const [t,sT]=useState("")
+    const [e,sE]=useState("")
+    useEffect(()=>{sT(parseJwt(getToken(true))?.name);sE(parseJwt(getToken(false))?.icon)},[])
+    return <div className={styles.button_user}>
+        <Button icon={<UserIcon width={48} height={48} name={e} />}>
+            <UserNameMini name={t} />
+        </Button>
     </div>
 }
 

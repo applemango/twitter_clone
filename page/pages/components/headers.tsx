@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import useWindowSize from "./hook/useWindowSize"
 
 const Header = ({
     children,
@@ -9,6 +10,7 @@ const Header = ({
     useStyle?: boolean,
     style?: any
 }) => {
+    const [w, h] = useWindowSize()
     const ref = useRef<any>(null)
     const refs = useRef<any>(null)
     const [height, setHeight] = useState(0)
