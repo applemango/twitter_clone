@@ -33,13 +33,19 @@ const UserProfileInfo = ({
             <div><IconCalender/></div>
             <p>{`joined ${user.joined}`}</p>
         </div>
-        <div className={styles.follower}>
-            <p><span>{user.following}</span>Following</p>
-            <p><span>{user.follower}</span>Followers</p>
-        </div>
+        <UserProfileInfoFollower user={user} />
         <p className={styles.info}>Not followed by anyone you're following</p>{/* what is thats */}
     </div>
 }
+
+const UserProfileInfoFollower = ({
+    user
+}:{
+    user: TypeUser
+}) => <div className={styles.follower}>
+        <p><span>{user.following}</span>Following</p>
+        <p><span>{user.follower}</span>Followers</p>
+    </div>
 
 const UserProfileMenu = ({
     onTweets = () => {},
@@ -77,5 +83,7 @@ const UserProfileMenu = ({
 
 export {
     UserProfile as default,
-    UserProfileMenu
+    UserProfileInfo,
+    UserProfileInfoFollower,
+    UserProfileMenu,
 }

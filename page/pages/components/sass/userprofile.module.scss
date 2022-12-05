@@ -85,6 +85,23 @@
         color: #666;
     }
 }
+.follower {
+    margin-top: 12px;
+    display: flex;
+    p {
+        font-size: 15px;
+        margin: 0;
+        color: #666;
+        &:not(:last-child) {
+            margin-right: 16px;
+        }
+        span {
+            margin-right: 4px;
+            font-weight: 500;
+            color: #222;
+        }
+    }
+}
 
 .menu {
     display: flex;

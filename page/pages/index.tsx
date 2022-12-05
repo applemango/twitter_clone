@@ -15,10 +15,10 @@ export default function Home() {
     <div>
       <Main children={
         <>
-          <Headers>
+          <Headers menu={true}>
             <h1 style={{
-              fontSize: 20,
-              margin: 0,
+              fontSize: 18,
+              margin: 8,
               color: "#222"
             }}>Home</h1>
           </Headers>

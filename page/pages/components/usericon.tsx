@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react"
+import { getToken, parseJwt } from "../../lib/res/token"
 import { Img } from "./components/components"
 import styles from "./sass/usericon.module.scss"
 const UserIcon = ({
@@ -22,4 +24,20 @@ const UserIcon = ({
         }} className={styles.usericon}><Img name={name} /></div>}
     </div>
 }
-export default UserIcon
+
+const UserIconMe = ({
+    width,
+    height,
+}:{
+    width?: number
+    height?: number
+}) => {
+    const [t,sT]=useState("")
+    useEffect(()=>sT(parseJwt(getToken(true))?.icon),[])
+    return <UserIcon width={width} height={height} name={t} />
+}
+
+export {
+    UserIcon as default,
+    UserIconMe
+}

@@ -22,10 +22,10 @@ const MessagesUser = ({
         r()
     },[])
     return <div className={styles.users}>
-        <Header>
+        <Header menu={true}>
             <h1 style={{
-              fontSize: 20,
-              margin: 0,
+              fontSize: 18,
+              margin: 8,
               color: "#222"
             }}>Messages</h1>
         </Header>
