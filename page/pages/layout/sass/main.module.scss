@@ -54,11 +54,15 @@
     .left {
         display: none;
     }
+    .main:not(.notMarginBottom) {
+        margin-bottom: 55px;
+    }
     ._ {
         width: 100%;
         .center {
             margin: 0;
             border: none;
+            min-height: inherit;
         }
     }
 }

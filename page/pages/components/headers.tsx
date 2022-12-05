@@ -8,12 +8,14 @@ const Header = ({
     children,
     useStyle = true,
     style = {},
-    backLink = false
+    backLink = false,
+    onBackClick = undefined
 }:{
     children: any
     useStyle?: boolean
     style?: any
     backLink?: boolean
+    onBackClick?: Function | undefined
 }) => {
     const [w, h] = useWindowSize()
     const ref = useRef<any>(null)
@@ -38,10 +40,11 @@ const Header = ({
             width: width,
         }, style)}>
         <div style={{
-            display: backLink ?"flex" : "",
-            alignItems: backLink ? "center" : "",
+            display: backLink || onBackClick ?"flex" : "",
+            alignItems: backLink || onBackClick ? "center" : "",
         }}>
             {backLink && <BackButton />}
+            {onBackClick && <div onClick={() => onBackClick()} className={styles.backButton}><IconBack /></div>}
             {children}
         </div>
     </div>

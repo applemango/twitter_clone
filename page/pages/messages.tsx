@@ -9,6 +9,7 @@ import { getToken } from '../lib/res/token'
 import MessagesUser from './components/messagesurl'
 import Messages from './components/messages'
 import MessagesChat from './components/messageschat'
+import styles from "./components/sass/messages.module.scss"
 
 const socket = io("ws://127.0.0.1:5000", {
     query : {
@@ -20,10 +21,12 @@ export default function Home() {
   const [location, setLocation] = useState(-1)
   return (
     <div>
-      <Main right={false} children={<div style={{display: "flex"}}>
-        <MessagesUser onChange={(e: number) => setLocation(e)} />
-        <MessagesChat socket={socket} location={location} />
-      </div>} />
+      <Main marginBottom={false} navigator={location == -1} right={false} children={<>
+        <div className={`${styles.main} ${location!=-1 ? styles.active : ""}`} style={{display: "flex"}}>
+          <MessagesUser onChange={(e: number) => setLocation(e)} />
+          <MessagesChat setLocation={setLocation} socket={socket} location={location} />
+        </div>
+      </>} />
     </div>
   )
 }

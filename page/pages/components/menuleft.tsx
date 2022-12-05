@@ -14,10 +14,10 @@ const MenuLeft = () => {
             <ButtonLink color_hover={"#1EA1F125"} active={false} link={"/"} icon={IconTwitter} />
             <ButtonLink link={"/"}                   iconActive={IconHomeBold} icon={IconHome} children="home" />
             <ButtonLink link={"/explore"}            iconActive={IconExploreBold} icon={IconExplore} children="Explore" />
-            <ButtonLink link={"/"??"/notifications"} iconActive={IconNotificationsBold} icon={IconNotifications} children="Notifications" />
+            <ButtonLink link={"/notifications"} iconActive={IconNotificationsBold} icon={IconNotifications} children="Notifications" />
             <ButtonLink link={"/messages"}           iconActive={IconMessagesBold} icon={IconMessages} children="Messages" />
-            <ButtonLink link={"/"??"/bookmarks"}     iconActive={IconBookmarksBold} icon={IconBookmarks} children="Bookmarks" />
-            <ButtonLink link={"/"??"/lists"}         iconActive={IconListsBold} icon={IconLists} children="Lists" />
+            <ButtonLink link={"/bookmarks"}     iconActive={IconBookmarksBold} icon={IconBookmarks} children="Bookmarks" />
+            <ButtonLink link={"/lists"}         iconActive={IconListsBold} icon={IconLists} children="Lists" />
             <ButtonLink link={`/@/${t}`}       iconActive={IconProfileBold} icon={IconProfile} children="Profiles" />
             <Button icon={IconMore()}>
                 <p style={{fontWeight: 400}}>More</p>

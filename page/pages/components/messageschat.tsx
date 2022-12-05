@@ -7,13 +7,17 @@ import MessagesForm from "./messagesform"
 
 import styles from "./sass/messages.module.scss";
 import { getToken, isLoginAndLogin } from "../../lib/res/token"
+import Headers from "./headers"
+import Header from "./headers"
 
 const MessagesChat = ({
     socket,
-    location
+    location,
+    setLocation = () => {}
 }:{
     socket: any,
     location: number
+    setLocation?: Function
 }) => {
     const [messages, setMessages] = useState<Array<TypeMessage>>()
     useEffect(() => {
@@ -40,20 +44,22 @@ const MessagesChat = ({
         })
     },[])
     if(location == -1)
-        return <div style={{width: "calc(100% - 350px)"}} />
-    return <div className={styles.chat} style={{width: "calc(100% - 350px)"}}>
-        <Messages messages={messages} />
-        <MessagesForm onSend={(e: string, c: string) => {
-            const r = async () => {
-                if(!e || !location)
-                    return
-                const res = await isLoginAndLogin()
-                if(!res)
-                    return
-                socket.emit("socket_send_message_to_user", {"body":e,"file":c,"to":location,"token":getToken()})
-            }
-            r()
-        }} />
-    </div>
+        return <div className={styles.chat} style={{width: "calc(100% - 350px)"}} />
+    return <>
+        <div className={styles.chat} style={{width: "calc(100% - 350px)"}}>
+            <Messages setLocation={setLocation} messages={messages} />
+            <MessagesForm onSend={(e: string, c: string) => {
+                const r = async () => {
+                    if(!e || !location)
+                        return
+                    const res = await isLoginAndLogin()
+                    if(!res)
+                        return
+                    socket.emit("socket_send_message_to_user", {"body":e,"file":c,"to":location,"token":getToken()})
+                }
+                r()
+            }} />
+        </div>
+    </>
 }
 export default MessagesChat
