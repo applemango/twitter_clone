@@ -98,6 +98,11 @@ class User(db.Model):  # type: ignore
             "follower": self.follower_count(),
             "following": self.followed_count() 
         }
+    def to_object_user(self, user):
+        return self.to_object().update({
+            "follow": user.is_following(self)
+        })
+
 
 class Tweet(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -133,6 +138,11 @@ class Tweet(db.Model): # type: ignore
             "replays": self.replays().count(),
             "replay": to_objects(self.replays().all())
         }
+    def to_object_user(self, user):
+        like = TweetLikes.query.filter(TweetLikes.user_id==user.id, TweetLikes.tweet_id==self.id).first()
+        return self.to_object().update({
+            "like": like.isLike or False
+        })
 """tweet == (retweet && replay)
 class TweetReplies(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -166,6 +176,13 @@ class TweetLikes(db.Model): # type: ignore
     tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
     #replay_id = db.Column(db.Integer, db.ForeignKey("tweet_replies.id"))
     isLike = db.Column(db.Boolean, default=True)
+    def to_object(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "tweet_id": self.tweet_id,
+            "like": self.isLike
+        }
 
 class Image(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -250,14 +267,22 @@ def route_tweet_post():
 
 @app.route("/tweets", methods=["GET"])
 @cross_origin()
-@cross_origin()
+@jwt_required()
 def route_tweet_get():
     tweets = get_tweets(
+        user = User.query.get(request_user()),
         start = request_arg_int(request, "start"),
-        limit = request_arg_int(request, "limit")
+        limit = request_arg_int(request, "limit"),
+        replay = request_arg_bool(request, "reply"),
+        user_id = request_arg_int(request, "user"),
+        user_name = request_arg(request, "username"),
+        tweet_id = request_arg_int(request, "tweet"),
+        media = request_arg_bool(request, "media"),
+        like = request_arg_bool(request, "like"),
     ).all()
     return jsonify({"data": to_objects(tweets)})
 
+"""need?
 @app.route("/tweets/user/<user>", methods=["GET"])
 @cross_origin()
 @jwt_required()
@@ -269,6 +294,7 @@ def route_tweet_user_get(user):
         user_id = user.id
     ).all()
     return jsonify({"data": to_objects(tweets)})
+"""
 
 @app.route("/tweets/<id>", methods=["GET"])
 @cross_origin()
@@ -278,6 +304,27 @@ def route_tweet_id_get(id):
     if not tweet:
         return jsonify({"data": None})
     return jsonify({"data": tweet.to_object()})
+
+@app.route("/tweets/<id>/like", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_tweet_id_like_post(id):
+    tweet = Tweet.query.get(int(id))
+    user = User.query.get(request_user())
+    if not tweet or not user:
+        return jsonify({"data": None})
+    if likes:=TweetLikes.query.filter(TweetLikes.user_id==request_user(), TweetLikes.tweet_id==tweet.id).first():
+        likes.isLike = not likes.isLike
+        db.session.commit()
+        return jsonify({"data": likes.to_object()})
+    likes = TweetLikes(
+        user_id = user.id,
+        tweet_id = tweet.id,
+        isLike = True
+    )
+    db.session.add(likes)
+    db.session.commit()
+    return jsonify({"data": likes.to_object()})
 
 @app.route("/tweets/image", methods=["POST"])
 @cross_origin()
@@ -370,20 +417,38 @@ def socket_send_message_to_user(message):
 ###########################
 ###########################
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
+    user = None,
     start = None,
     limit = None,
     user_id = None,
+    user_name = None,
     replay = False,
-    tweet_id = None
+    tweet_id = None,
+    media = None,
+    like = None,
 ):
+    if user_name:
+        u = User.query.filter(User.name == user_name).first()
+        if u:
+            user_id = u.id
     tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
         .filter(Tweet.user_id == user_id if user_id else True) \
         .filter(Tweet.tweet_id == None if not replay else True) \
-        .filter(Tweet.tweet_id == tweet_id if tweet_id else True)
-    if limit:
-        tweets = tweets.limit(limit)
-    if start:
-        tweets = tweets[start:]
+        .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
+        .filter(Tweet.content_type == "image" if media else True)
+    
+    if like and user:
+        """
+        i don't like query
+        """
+        tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
+        .filter(Tweet.user_id == user_id if user_id else True) \
+        .filter(Tweet.tweet_id == None if not replay else True) \
+        .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
+        .filter(Tweet.content_type == "image" if media else True) \
+        .join(TweetLikes, (TweetLikes.tweet_id == Tweet.id)) \
+        .filter(and_(TweetLikes.isLike == True, TweetLikes.user_id == user.id) if like and user else True)
+
     return tweets
 
 def to_objects(data: list):
@@ -411,6 +476,15 @@ def request_arg_int(request: Request, name: str):
     except:
         return None
     return None
+
+def request_arg_bool(request: Request, name: str):
+    try:
+        r = request.args.get(name)
+        if r:
+            return True
+    except:
+        return False
+    return False
 
 def request_data(request: Request, name: str):
     return json.loads(json.loads(request.get_data().decode('utf-8'))["body"])[name]

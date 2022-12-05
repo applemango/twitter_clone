@@ -41,12 +41,12 @@ export default function User() {
       <div>
         <Main children={
           <>
-            <Headers>
+            <Headers backLink={true}>
               <h1 style={{
-                fontSize: 20,
+                fontSize: 18,
                 margin: 0,
                 color: "#222"
-              }}>Home</h1>
+              }}>Tweet</h1>
             </Headers>
             {<ComponentsBorderBottom>
                 <>

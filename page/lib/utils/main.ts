@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getToken, isLoginAndLogin, logout } from "../res/token"
+import { gzip, unzip } from "./gzip";
 
 export function getUrl (url: string, useToken: boolean = false): string {
     if(process.browser) {
@@ -16,6 +17,15 @@ export function getUrl (url: string, useToken: boolean = false): string {
         return `${location.protocol}//${host}:5000/${url}`
     }
     return ""
+}
+
+export function getLink (url: string, path: string): string {
+    return `${url}?ref=${gzip(path)}`
+}
+export function getRef (ref: string | undefined): string {
+    if(!ref)
+        return "/"
+    return unzip(ref)
 }
 
 export async function get(url: string,login: boolean = true, header: any = {}) {

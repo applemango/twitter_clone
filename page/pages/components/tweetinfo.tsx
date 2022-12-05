@@ -4,6 +4,7 @@ import styles from "./sass/tweet.module.scss"
 import UserIcon from "./usericon"
 import { UserNameMini } from "./userinfo"
 import { IconLike, IconRetweet, IconMessages, IconShare, IconReplay } from "./components/icon"
+import { getUrl, post } from "../../lib/utils/main"
 export const TweetTopOneLine = ({
     tweet
 }:{
@@ -91,8 +92,8 @@ export const TweetBottomMultipleLineTooltip = ({
 }:{
     tweet: TypeTweet
 }) => {
-    const Button = ({icon}:{icon:any}) => {
-        return <div className={styles.button}>
+    const Button = ({icon,onClick=()=>{}}:{icon:any,onClick?:Function}) => {
+        return <div onClick={() => onClick()} className={styles.button}>
             <div>
                 {icon}
             </div>
@@ -101,7 +102,9 @@ export const TweetBottomMultipleLineTooltip = ({
     return <div className={styles.TweetBottomMultipleLineTooltip}>
         <Button icon={IconReplay()} />
         <Button icon={IconRetweet()} />
-        <Button icon={IconLike()}    />
+        <Button onClick={async ()=> {
+            const res = await post(getUrl(`/tweets/${tweet.id}/like`))
+        }} icon={IconLike()}    />
         <Button icon={IconShare()}   />
     </div>
 }

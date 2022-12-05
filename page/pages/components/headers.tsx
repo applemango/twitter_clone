@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react"
+import { BackLink } from "./components/components"
+import { IconBack } from "./components/icon"
 import useWindowSize from "./hook/useWindowSize"
+import styles from "./sass/header.module.scss"
 
 const Header = ({
     children,
     useStyle = true,
-    style = {}
+    style = {},
+    backLink = false
 }:{
-    children: any,
-    useStyle?: boolean,
+    children: any
+    useStyle?: boolean
     style?: any
+    backLink?: boolean
 }) => {
     const [w, h] = useWindowSize()
     const ref = useRef<any>(null)
@@ -29,13 +34,27 @@ const Header = ({
             position: "fixed",
             backgroundColor: useStyle ? "#ffffff90" : "#fff",
             backdropFilter: useStyle ? "blur(12px)" : "",
-            padding: useStyle ? "16px" : "",
+            padding: useStyle ? 8 : "",
             width: width,
         }, style)}>
-        {children}
+        <div style={{
+            display: backLink ?"flex" : "",
+            alignItems: backLink ? "center" : "",
+        }}>
+            {backLink && <BackButton />}
+            {children}
+        </div>
     </div>
     </div>
 }
+
+const BackButton = () => <BackLink>
+        <div className={styles.backButton}>
+            <IconBack />
+        </div>
+    </BackLink>
+
 export {
-    Header as default
+    Header as default,
+    BackButton
 }

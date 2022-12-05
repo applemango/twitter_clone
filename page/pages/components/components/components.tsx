@@ -1,9 +1,31 @@
-import { getUrl } from "../../../lib/utils/main"
+import { getLink, getRef, getUrl } from "../../../lib/utils/main"
 import UserIcon from "../usericon"
 import styles from "./sass/components.module.scss"
 import Image from "next/image"
 import { useEffect } from "react"
 import { TypeTweet } from "../../../lib/types/type"
+import Link from "next/link"
+import { useRouter } from "next/router"
+
+export const LinkBack = ({
+    children,
+    href
+}:{
+    children: any,
+    href: string
+}) => {
+    const router = useRouter()
+    return <Link href={getLink(href, router.asPath)}>{children}</Link>
+}
+export const BackLink = ({
+    children
+}:{
+    children: any
+}) => {
+    const router = useRouter()
+    const { ref } = router.query
+    return <Link href={Array.isArray(ref) ? "/" : getRef(ref)}>{children}</Link>
+}
 
 export const TweetIconLeft = ({
     name,
