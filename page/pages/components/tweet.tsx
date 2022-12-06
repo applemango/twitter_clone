@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { TypeTweet } from "../../lib/types/type"
-import { LinkBack, TweetIconLeft } from "./components/components"
+import { LinkBack, TweetIconLeft, TweetIconLeftBorder, TweetIconLeftBorderAll, TweetIconLeftBorderEnd } from "./components/components"
 import { IconRetweet } from "./components/icon"
 import styles from "./sass/tweet.module.scss"
 import TweetContent from "./tweetcontent"
@@ -31,6 +31,47 @@ const Tweet = ({
     </div>
 }
 
+const TweetReplays = ({
+    tweet
+}:{
+    tweet: TypeTweet
+}) => {
+    const rep = tweet.replay.filter((t) => t.user_id == tweet.user_id)
+    if (!rep.length)
+        return <Tweet tweet={tweet} />
+    const end = rep[rep.length - 1]
+    rep.pop()
+    return <div className={styles.replays}>
+        <LinkBack href={`/@/${tweet.user.name}/${tweet.id}`}>
+            <TweetIconLeftBorder name={tweet.user_icon}>
+                <TweetTopOneLine tweet={tweet} />
+                <TweetText tweet={tweet} />
+                <TweetContent tweet={tweet} />
+                <TweetBottomOneLine tweet={tweet} />
+            </TweetIconLeftBorder>
+        </LinkBack>
+        {!!rep.length && rep.map((t) => (
+            <LinkBack href={`/@/${t.user.name}/${t.id}`}>
+                <TweetIconLeftBorderAll name={t.user_icon}>
+                    <TweetTopOneLine tweet={t} />
+                    <TweetText tweet={t} />
+                    <TweetContent tweet={t} />
+                    <TweetBottomOneLine tweet={t} />
+                </TweetIconLeftBorderAll>
+            </LinkBack>
+        ))}
+        {end && <LinkBack href={`/@/${end.user.name}/${end.id}`}>
+            <TweetIconLeftBorderEnd name={end.user_icon}>
+                <TweetTopOneLine tweet={end} />
+                <TweetText tweet={end} />
+                <TweetContent tweet={end} />
+                <TweetBottomOneLine tweet={end} />
+            </TweetIconLeftBorderEnd>
+        </LinkBack>
+        }
+    </div>
+}
+
 const TweetText = ({tweet}:{tweet: TypeTweet}) => {
     return <div className={styles.text}>
         <p>{tweet.text}</p>
@@ -39,5 +80,6 @@ const TweetText = ({tweet}:{tweet: TypeTweet}) => {
 
 export {
     Tweet as default,
-    TweetText
+    TweetText,
+    TweetReplays
 }

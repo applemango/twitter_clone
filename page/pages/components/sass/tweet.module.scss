@@ -1,4 +1,4 @@
-.main {
+.main:not(.replays .main), .replays {
     padding: 16px;
     .text {
         margin: 4px 0 8px 0;
@@ -8,6 +8,7 @@
         }
     }
 }
+
 @media (max-width: 450px) {
     .main .text p {
         font-size: 14px;

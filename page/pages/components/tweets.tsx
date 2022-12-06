@@ -1,6 +1,6 @@
 import { TypeTweet } from "../../lib/types/type"
 import { ComponentsBorderBottom } from "./components/components"
-import Tweet from "./tweet"
+import Tweet, { TweetReplays } from "./tweet"
 
 const Tweets = ({
     tweets
@@ -10,7 +10,7 @@ const Tweets = ({
     return <>
         <ComponentsBorderBottom>
             {tweets.map((tweet: TypeTweet, i:number) => {
-                return <Tweet tweet={tweet} />
+                return <TweetReplays tweet={tweet} />
             })}
         </ComponentsBorderBottom>
     </>
