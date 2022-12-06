@@ -1,5 +1,7 @@
 .main:not(.replays .main), .replays {
-    padding: 16px;
+    &:not(.retweet > &) {
+        padding: 16px;
+    }
     .text {
         margin: 4px 0 8px 0;
         font-size: 15px;
