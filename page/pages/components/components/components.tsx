@@ -47,6 +47,47 @@ export const TweetIconLeft = ({
     </div>
 }
 
+export const TweetIconLeftBorder = ({
+    name,
+    children,
+    style,
+    styleLeft,
+    styleRight,
+}:{
+    name?: string
+    children: any
+    style?: any
+    styleLeft?: any
+    styleRight?: any
+}) => {
+    return <div className={styles.TweetIconBorderStart} style={Object.assign({display: "flex"}, style)}>
+        <div className={styles.border} style={Object.assign({marginRight: 10}, styleLeft)}>
+            <UserIcon name={name} width={42} height={42} />
+        </div>
+        <div style={Object.assign({
+            width: "100%",
+            height: "100%",
+        },styleRight)}>
+            {children}
+        </div>
+    </div>
+}
+export const TweetIconLeftBorderAll = ({
+    name,
+    children
+}:{
+    name?: string
+    children: any
+}) => <TweetIconLeftBorder name={name} children={children} styleLeft={{paddingTop: 16}} styleRight={{paddingTop: 16}}  />
+
+export const TweetIconLeftBorderEnd = ({
+    name,
+    children
+}:{
+    name?: string
+    children: any
+}) => <TweetIconLeftBorder name={name} children={children} styleLeft={{paddingTop: 16, height: "fit-content"}} styleRight={{paddingTop: 16}}  />
+
 export const ComponentsBorderBottom = ({
     children,
     end = false

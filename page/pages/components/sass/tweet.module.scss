@@ -2,8 +2,49 @@
     padding: 16px;
     .text {
         margin: 4px 0 8px 0;
+        font-size: 15px;
         p {
             margin: 0;
+        }
+    }
+}
+@media (max-width: 450px) {
+    .main .text p {
+        font-size: 14px;
+    }
+}
+
+.retweet {
+    padding: 6px 16px 16px 16px;
+    >.main {
+        padding: 0;
+        &>a > div > div:last-child  {
+            top: 0px;
+            position: relative;
+        }
+    }
+    >.info {
+        width: fit-content;
+        position: relative;
+        top: 0px;
+        left: 25px;
+        display: flex;
+        align-items: center;
+        p {
+            margin: 0;
+            margin-bottom: 2px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+        }
+        svg {
+            scale: 0.8;
+            >path {
+                stroke: #9e9e9e;
+            }
+        }
+        >*:not(:last-child) {
+            margin-right: 8px;
         }
     }
 }
@@ -26,11 +67,13 @@
     display: flex;
     .username {
         font-weight: 500;
+        font-size: 14px;
     }
     .info {
         display: flex;
         margin-left: 4px;
         > p {
+            font-size: 14px;
             color: #777;
             margin-right: 4px;
             &:not(:last-child)::after {
@@ -41,6 +84,16 @@
     }
     p {
         margin: 0;
+    }
+}
+@media (max-width: 450px) {
+    .TweetTopOneLine {
+        .username {
+            font-size: 15px;
+        }
+        .info > p {
+            font-size: 15px;
+        }
     }
 }
 

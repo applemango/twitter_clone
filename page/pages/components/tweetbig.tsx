@@ -18,7 +18,7 @@ const TweetBig = ({
     return <div className={styles.big}>
         <TweetTopTwoLine tweet={tweet} />
         <TweetBigText tweet={tweet} />
-        <TweetContent content={tweet.content} contentType={tweet.content_type} />
+        <TweetContent tweet={tweet}/>
         <ComponentsBorderBottom>
             <TweetBottomMultipleLineDate tweet={tweet} />
             <TweetBottomMultipleLineData tweet={tweet} />

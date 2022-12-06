@@ -115,13 +115,16 @@ class Tweet(db.Model): # type: ignore
     def likes(self):
         return TweetLikes.query.filter(TweetLikes.tweet_id==self.id, TweetLikes.isLike==True)
     def retweets(self):
-        return Tweet.query.filter(Tweet.text==None, Tweet.content_type=="retweet", Tweet.content==str(self.id))
+        return Tweet.query.filter(Tweet.text=="", Tweet.content_type=="retweet", Tweet.content==str(self.id))
     def quoteTweets(self):
-        return Tweet.query.filter(Tweet.text!=None, Tweet.content_type=="retweet", Tweet.content==str(self.id))
+        return Tweet.query.filter(Tweet.text!="", Tweet.content_type=="retweet", Tweet.content==str(self.id))
     def replays(self):
         return Tweet.query.filter(Tweet.tweet_id==self.id)
     def to_object(self):
         user = User.query.get(self.user_id)
+        retweet = None
+        if self.content_type == "retweet":
+            retweet = Tweet.query.get(int(self.content)).to_object() or None
         return {
             "id": self.id,
             "user": user.to_object(),
@@ -136,7 +139,8 @@ class Tweet(db.Model): # type: ignore
             "retweets": self.retweets().count(),
             "quoteTweets": self.quoteTweets().count(),
             "replays": self.replays().count(),
-            "replay": to_objects(self.replays().all())
+            "replay": to_objects(self.replays().all()),
+            "retweet": retweet,
         }
     def to_object_user(self, user):
         like = TweetLikes.query.filter(TweetLikes.user_id==user.id, TweetLikes.tweet_id==self.id).first()

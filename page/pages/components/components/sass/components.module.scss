@@ -32,3 +32,15 @@
         color: #fff;
     }
 }
+
+.TweetIconBorderStart {
+    .border {
+        width: calc(42px / 2);
+        margin-left: calc(42px / 2);
+        border-left: 2px solid #eee;
+        > div {
+            outline: 5px solid #fff;
+            margin-left: calc(42px / -2);
+        }
+    }
+}

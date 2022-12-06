@@ -5,6 +5,7 @@ import UserIcon from "./usericon"
 import { UserNameMini } from "./userinfo"
 import { IconLike, IconRetweet, IconMessages, IconShare, IconReplay } from "./components/icon"
 import { getUrl, post } from "../../lib/utils/main"
+import { post_tweet } from "../../lib/res/tweet"
 export const TweetTopOneLine = ({
     tweet
 }:{
@@ -101,7 +102,9 @@ export const TweetBottomMultipleLineTooltip = ({
     }
     return <div className={styles.TweetBottomMultipleLineTooltip}>
         <Button icon={IconReplay()} />
-        <Button icon={IconRetweet()} />
+        <Button onClick={async () => {
+            const res = await post_tweet("", String(tweet.id), "retweet")
+        }} icon={IconRetweet()} />
         <Button onClick={async ()=> {
             const res = await post(getUrl(`/tweets/${tweet.id}/like`))
         }} icon={IconLike()}    />
