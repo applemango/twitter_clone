@@ -37,7 +37,7 @@ const TweetReplays = ({
     tweet: TypeTweet
 }) => {
     const rep = tweet.replay.filter((t) => t.user_id == tweet.user_id)
-    if (!rep.length)
+    if (!rep.length || tweet.content_type== "retweet")
         return <Tweet tweet={tweet} />
     const end = rep[rep.length - 1]
     rep.pop()

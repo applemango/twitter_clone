@@ -11,7 +11,7 @@
     }
 }
 
-@media (max-width: 450px) {
+@media (min-width: 451px) {
     .main .text p {
         font-size: 14px;
     }
@@ -89,7 +89,7 @@
         margin: 0;
     }
 }
-@media (max-width: 450px) {
+@media (min-width: 451px) {
     .TweetTopOneLine {
         .username {
             font-size: 15px;
