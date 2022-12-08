@@ -12,5 +12,3 @@ if __name__ == '__main__':
 
     mango.follow(apple)
     db.session.commit()
-    #print(mango.followed().all())
-    #print(mango.followed_count())

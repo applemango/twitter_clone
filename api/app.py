@@ -23,6 +23,8 @@ from werkzeug.utils import secure_filename
 from os import path
 import sys
 
+from tag import tag_parse
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 uploads_file_path = os.path.join(basedir, 'contents')
 app = Flask(__name__, instance_relative_config=True)
@@ -202,6 +204,13 @@ class TweetLikes(db.Model): # type: ignore
             "like": self.isLike
         }
 
+class TweetTag(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
+    data = db.Column(db.String)
+
+
 class Image(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     path = db.Column(db.String(), nullable=False)
@@ -286,9 +295,9 @@ def route_tweet_post():
         content = content,
         content_type = content_type,
     )
-
     db.session.add(tweet)
     db.session.commit()
+    tag_add(tweet.text, tweet)
     return jsonify({"tweet": tweet.to_object_user(User.query.get(request_user())),"msg": "created"})
 
 @app.route("/tweets", methods=["GET"])
@@ -442,6 +451,20 @@ def socket_send_message_to_user(message):
 ###########################
 ###########################
 ###########################
+def tag_add(text: str, tweet: Tweet):
+    tag = tag_parse(text)
+    if len(tag) < 1:
+        return
+    for t in tag:
+        tt = TweetTag(
+            user_id = tweet.user_id,
+            tweet_id = tweet.id,
+            data = t
+        )
+        db.session.add(tt)
+    db.session.commit()
+    return
+
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     user = None,
     start = None,

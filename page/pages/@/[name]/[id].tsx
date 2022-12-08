@@ -52,7 +52,7 @@ export default function User() {
                 <>
                     <TweetBig setReplays={setReplays} tweet={tweet} />
                 </>
-                <Tweets tweets={replays} />
+                <Tweets filter={(t: TypeTweet) => true} tweets={replays} />
             </ComponentsBorderBottom>}
           </>
       } />

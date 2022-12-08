@@ -3,14 +3,16 @@ import { ComponentsBorderBottom } from "./components/components"
 import Tweet, { TweetReplays } from "./tweet"
 
 const Tweets = ({
-    tweets
+    tweets,
+    filter
 }:{
-    tweets: Array<TypeTweet>
+    tweets: Array<TypeTweet>,
+    filter?: Function
 }) => {
     return <>
         <ComponentsBorderBottom>
             {tweets.map((tweet: TypeTweet, i:number) => {
-                return <TweetReplays tweet={tweet} />
+                return <TweetReplays filter={filter} tweet={tweet} />
             })}
         </ComponentsBorderBottom>
     </>

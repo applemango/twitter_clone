@@ -151,7 +151,7 @@
         margin: 0;
         margin-left: 12px;
     }
-    &:hover p, .active p {
+    .button:hover p, .active p {
         color: var(--color);
     }
 }

@@ -32,11 +32,13 @@ const Tweet = ({
 }
 
 const TweetReplays = ({
-    tweet
+    tweet,
+    filter = (t: TypeTweet) => t.user_id == tweet.user_id
 }:{
-    tweet: TypeTweet
+    tweet: TypeTweet,
+    filter?: Function
 }) => {
-    const rep = tweet.replay.filter((t) => t.user_id == tweet.user_id)
+    const rep = tweet.replay.filter((t) => filter(t))
     if (!rep.length || tweet.content_type== "retweet")
         return <Tweet tweet={tweet} />
     const end = rep[rep.length - 1]
