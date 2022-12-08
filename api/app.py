@@ -123,6 +123,13 @@ class Tweet(db.Model): # type: ignore
         return Tweet.query.filter(Tweet.text!="", Tweet.content_type=="retweet", Tweet.content==str(self.id))
     def replays(self):
         return Tweet.query.filter(Tweet.tweet_id==self.id)
+    def replay_top(self):
+        def gT(tweet:Tweet, tT: list = []):
+            if not tweet.tweet_id:
+                return tT
+            t = Tweet.query.get(tweet.tweet_id)
+            return gT(t, tT+[t])
+        return gT(self)
     def to_object(self):
         user = User.query.get(self.user_id)
         retweet = None
@@ -339,6 +346,17 @@ def route_tweet_id_get(id):
     if not tweet:
         return jsonify({"data": None})
     return jsonify({"data": tweet.to_object_user(User.query.get(request_user()))})
+
+@app.route("/tweets/<id>/if-replay-top", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_tweet_id_if_replay_top_get(id):
+    tweet = Tweet.query.get(int(id))
+    u = User.query.get(request_user())
+    if not tweet or not u:
+        return jsonify({"data": None})
+    t = to_objects(tweet.replay_top(), u)
+    return jsonify({"data": t})
 
 @app.route("/tweets/<id>/like", methods=["POST"])
 @cross_origin()
