@@ -7,6 +7,7 @@ import { IconLike, IconRetweet, IconMessages, IconShare, IconReplay } from "./co
 import { getUrl, post } from "../../lib/utils/main"
 import { post_tweet } from "../../lib/res/tweet"
 import { LinkBack } from "./components/components"
+import { useEffect, useState } from "react"
 export const TweetTopOneLine = ({
     tweet
 }:{
@@ -58,17 +59,27 @@ export const TweetBottomOneLine = ({
 }: {
     tweet: TypeTweet
 }) => {
-    const Button = ({icon, text}:{icon: any, text?: string}) => {
-        return <div className={styles.button}>
-            <div>{icon}</div>
-            <p>{text}</p>
+    const [replay, setReplay] = useState(tweet.replayed)
+    const [retweet, setRetweet] = useState(tweet.retweeted)
+    const [like, setLike] = useState(tweet.liked)
+    const Button = ({icon,text,color,active}:{icon:any,text: string,color?:string,active?:boolean}) => {
+        return <div style={{"--color-": `${color}1a` ?? "#eee"} as React.CSSProperties} className={`${active ? styles.active : ""} ${styles.button}`}>
+            <div style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>
+                {icon}
+            </div>
+            <p style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>{text}</p>
         </div>
     }
+    useEffect(() => {
+        setLike(tweet.liked)
+        setRetweet(tweet.retweeted)
+        setReplay(tweet.replayed)
+    },[tweet])
     return <div className={styles.TweetBottomOneLine}>
-        <Button icon={IconReplay()} text={tweet.replays.toString()}/>
-        <Button icon={IconRetweet()} text={tweet.retweets.toString()}/>
-        <Button icon={IconLike()} text={tweet.likes.toString()}/>
-        <Button icon={IconShare()} text={""}/>
+        <Button active={replay} color={"#1d9bf0"}  icon={IconReplay()} text={tweet.replays.toString()}/>
+        <Button active={retweet} color={"#00ba7c"}  icon={IconRetweet()} text={tweet.retweets.toString()}/>
+        <Button active={like} color={"#f91880"}  icon={IconLike()} text={tweet.likes.toString()}/>
+        <Button color={"#1d9bf0"}  icon={IconShare()} text={""}/>
     </div>
 }
 
@@ -99,21 +110,35 @@ export const TweetBottomMultipleLineTooltip = ({
 }:{
     tweet: TypeTweet
 }) => {
-    const Button = ({icon,onClick=()=>{}}:{icon:any,onClick?:Function}) => {
-        return <div onClick={() => onClick()} className={styles.button}>
-            <div>
+    const [replay, setReplay] = useState(tweet.replayed)
+    const [retweet, setRetweet] = useState(tweet.retweeted)
+    const [like, setLike] = useState(tweet.liked)
+    const Button = ({icon,onClick=()=>{},color,active}:{icon:any,onClick?:Function,color?:string,active?:boolean}) => {
+        return <div style={{"--color-": `${color}1a` ?? "#eee"} as React.CSSProperties} onClick={() => onClick()} className={`${active ? styles.active : ""} ${styles.button}`}>
+            <div style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>
                 {icon}
             </div>
         </div>
     }
+    useEffect(() => {
+        setLike(tweet.liked)
+        setRetweet(tweet.retweeted)
+        setReplay(tweet.replayed)
+    },[tweet])
     return <div className={styles.TweetBottomMultipleLineTooltip}>
-        <Button icon={IconReplay()} />
-        <Button onClick={async () => {
+        <Button active={replay} color={"#1d9bf0"} icon={IconReplay()} />
+        <Button active={retweet} color={"#00ba7c"} onClick={async () => {
             const res = await post_tweet("", String(tweet.id), "retweet")
+            if(!res) {
+                setRetweet(false)
+                return
+            }
+            setRetweet(true)
         }} icon={IconRetweet()} />
-        <Button onClick={async ()=> {
+        <Button active={like} color={"#f91880"} onClick={async ()=> {
             const res = await post(getUrl(`/tweets/${tweet.id}/like`))
+            setLike(res.data.data.like)
         }} icon={IconLike()}    />
-        <Button icon={IconShare()}   />
+        <Button color={"#1d9bf0"} icon={IconShare()}   />
     </div>
 }

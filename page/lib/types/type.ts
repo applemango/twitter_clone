@@ -62,6 +62,9 @@ export type TypeTweet = {
     replays: number
     replay: Array<TypeTweet>
     retweet: TypeTweet | null
+    liked: boolean
+    replayed: boolean
+    retweeted: boolean
 }
 export const TypeTweetExample = ():TypeTweet => {
     return {
@@ -79,7 +82,10 @@ export const TypeTweetExample = ():TypeTweet => {
         quoteTweets: -1,
         replays: -1,
         replay: [],
-        retweet: null
+        retweet: null,
+        liked: true,
+        replayed: false,
+        retweeted: false,
     }
 }
 

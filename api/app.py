@@ -99,9 +99,10 @@ class User(db.Model):  # type: ignore
             "following": self.followed_count() 
         }
     def to_object_user(self, user):
-        return self.to_object().update({
+        data = {
             "follow": user.is_following(self)
-        })
+        }
+        return dict(self.to_object(), **data)
 
 
 class Tweet(db.Model): # type: ignore
@@ -144,9 +145,22 @@ class Tweet(db.Model): # type: ignore
         }
     def to_object_user(self, user):
         like = TweetLikes.query.filter(TweetLikes.user_id==user.id, TweetLikes.tweet_id==self.id).first()
-        return self.to_object().update({
-            "like": like.isLike or False
-        })
+        retweet = Tweet.query.filter(Tweet.user_id==user.id,Tweet.content_type == "retweet",Tweet.content == str(self.id)).first()
+        replays = Tweet.query.filter(Tweet.user_id==user.id,Tweet.tweet_id == self.id).count()
+        user = User.query.get(self.user_id)
+
+        retweets = None
+        if self.content_type == "retweet":
+            retweets = Tweet.query.get(int(self.content)).to_object_user(user) or None
+        data = {
+            "liked": like.isLike if like else False,
+            "retweeted": True if retweet else False,
+            "replayed": True if replays else False,
+            "user": user.to_object_user(user),
+            "replay": to_objects(self.replays().all(), user),
+            "retweet": retweets,
+        }
+        return dict(self.to_object(), **data)
 """tweet == (retweet && replay)
 class TweetReplies(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -237,7 +251,7 @@ def route_replay_post():
     )
     db.session.add(tweet)
     db.session.commit()
-    return jsonify({"tweet": tweet.to_object()})
+    return jsonify({"tweet": tweet.to_object_user(User.query.get(request_user()))})
 
 @app.route("/replays/<id>", methods=["GET"])
 @cross_origin()
@@ -248,7 +262,7 @@ def route_replays_get(id):
         tweet_id = id,
         replay = True
     ).all()
-    return jsonify({"tweet": to_objects(tweet)})
+    return jsonify({"tweet": to_objects(tweet, User.query.get(request_user()))})
 
 @app.route("/tweets", methods=["POST"])
 @cross_origin()
@@ -257,7 +271,15 @@ def route_tweet_post():
     text = request_data(request, "text")
     content_type = request_data(request, "content_type")
     content = request_data(request, "content")
-    
+    if content_type == "retweet" and (t := Tweet.query.filter(
+        Tweet.user_id==request_user(),
+        Tweet.content_type == "retweet",
+        Tweet.content == content
+        ).first()):
+            db.session.delete(t)
+            db.session.commit()
+            return  jsonify({"msg": "deleted"})
+
     tweet = Tweet(
         user_id = request_user(),
         text = text,
@@ -267,7 +289,7 @@ def route_tweet_post():
 
     db.session.add(tweet)
     db.session.commit()
-    return jsonify({"tweet": tweet.to_object()})
+    return jsonify({"tweet": tweet.to_object_user(User.query.get(request_user())),"msg": "created"})
 
 @app.route("/tweets", methods=["GET"])
 @cross_origin()
@@ -284,7 +306,7 @@ def route_tweet_get():
         media = request_arg_bool(request, "media"),
         like = request_arg_bool(request, "like"),
     ).all()
-    return jsonify({"data": to_objects(tweets)})
+    return jsonify({"data": to_objects(tweets, User.query.get(request_user()))})
 
 """need?
 @app.route("/tweets/user/<user>", methods=["GET"])
@@ -307,7 +329,7 @@ def route_tweet_id_get(id):
     tweet = Tweet.query.get(int(id))
     if not tweet:
         return jsonify({"data": None})
-    return jsonify({"data": tweet.to_object()})
+    return jsonify({"data": tweet.to_object_user(User.query.get(request_user()))})
 
 @app.route("/tweets/<id>/like", methods=["POST"])
 @cross_origin()
@@ -367,7 +389,7 @@ def route_tweet_image_get(path):
 @jwt_required()
 def route_messages_user_get():
     user = User.query.filter(User.id != request_user()).all()
-    return jsonify({"data": to_objects(user)})
+    return jsonify({"data": to_objects(user, User.query.get(request_user()))})
 
 @app.route("/messages/<user>", methods=["GET"])
 @cross_origin()
@@ -383,7 +405,7 @@ def route_messages_get(user):
 @jwt_required()
 def route_user_get(user):
     user = User.query.filter(User.name == user).first()
-    return jsonify({"data": user.to_object()})
+    return jsonify({"data": user.to_object_user(User.query.get(request_user()))})
 
 ###########################
 ###########################
@@ -455,13 +477,13 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
 
     return tweets
 
-def to_objects(data: list):
+def to_objects(data: list, user = None):
     if not len(data):
         return []
     result = []
     for d in data:
         try:
-            result.append(d.to_object())
+            result.append(d.to_object_user(user)) if user else result.append(d.to_object())
         except:
             pass
     return result

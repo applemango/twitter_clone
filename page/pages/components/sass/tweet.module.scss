@@ -4,7 +4,7 @@
     }
     .text {
         margin: 4px 0 8px 0;
-        font-size: 15px;
+        font-size: 14px;
         p {
             margin: 0;
         }
@@ -13,7 +13,7 @@
 
 @media (min-width: 451px) {
     .main .text p {
-        font-size: 14px;
+        font-size: 15px;
     }
 }
 
@@ -110,10 +110,29 @@
 .TweetBottomOneLine {
     display: flex;
     align-items: center;
+    .button:hover svg, .button.active svg {
+        stroke: var(--color);
+    }
+    .button:hover svg>path, .button.active svg>path{fill: transparent;}
+    .button:hover svg:not(:has(path~path),:has(polyline))>path, .button.active svg:not(:has(path~path),:has(polyline))>path {
+        fill: var(--color);
+    }
+    svg, path {
+        transition: all 0.1s ease;
+    }
     .button {
         width: 25%;
         display: flex;
         align-items: center;
+        &:hover > div {
+            outline: 5px solid #eee;
+            background-color: #eee;
+
+
+            transition: all 0.2s ease;
+            outline: 5px solid var(--color-);
+            background-color: var(--color-);
+        }
     }
     .button div {
         width: fit-content;
@@ -123,10 +142,7 @@
         justify-content: center;
         padding: 2px;
         border-radius: 100%;
-        &:hover {
-            outline: 5px solid #eee;
-            background-color: #eee;
-        }
+        outline: 0px solid #fff;
     }
     p {
         color: #777;
@@ -134,6 +150,9 @@
         height: fit-content;
         margin: 0;
         margin-left: 12px;
+    }
+    &:hover p, .active p {
+        color: var(--color);
     }
 }
 
@@ -157,6 +176,16 @@
 
 .TweetBottomMultipleLineTooltip {
     display: flex;
+    >.button>div:hover svg:hover, .button.active svg {
+        stroke: var(--color);
+    }
+    >.button>div:hover svg>path, .button.active svg>path{fill: transparent;}
+    >.button>div:hover svg:not(:has(path~path),:has(polyline))>path, .button.active svg:not(:has(path~path),:has(polyline))>path {
+        fill: var(--color);
+    }
+    svg, path {
+        transition: all 0.1s ease;
+    }
     svg {
         width: 24px;
         height: 24px;
@@ -168,15 +197,19 @@
         justify-content: center;
         margin: 4px 4px;
         > div {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
+            margin: 5px 0;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 6px;
             border-radius: 100%;
-            &:hover {
-                background-color: #eee;
+            outline: 0px solid #fff;
+            &:hover/*:not(.active div)*/ {
+                outline: 5px solid var(--color-);
+                transition: all 0.2s ease;
+                background-color: var(--color-);
             }
         }
     }
