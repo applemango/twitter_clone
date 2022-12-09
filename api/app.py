@@ -483,16 +483,12 @@ def tag_add(text: str, tweet: Tweet):
     db.session.commit()
     return
 
-def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
-    user = None,
-    start = None,
-    limit = None,
+def get_tweets_helper(
     user_id = None,
     user_name = None,
     replay = False,
     tweet_id = None,
     media = None,
-    like = None,
 ):
     if user_name:
         u = User.query.filter(User.name == user_name).first()
@@ -503,10 +499,88 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
         .filter(Tweet.tweet_id == None if not replay else True) \
         .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
         .filter(Tweet.content_type == "image" if media else True)
-    
+    return tweets
+
+def get_tweets_helper_like(
+    user,
+    like,
+    query,
+):
+    if not query or not like or not user:
+        return query
+    return query.join(TweetLikes, (TweetLikes.tweet_id == Tweet.id)).filter(and_(TweetLikes.isLike == True, TweetLikes.user_id == user.id) if like and user else True)
+
+def get_tweets_helper_tag(
+    tag = None,
+    query = Tweet.query,
+):
+    if not query or not tag:
+        return query
+    q = query.join(TweetTag, (TweetTag.tweet_id == Tweet.id)).filter(TweetTag.data == tag)
+    return q
+
+def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
+    user = None,
+    start = None,
+    limit = None,
+    user_id = None,
+    user_name = None,
+    replay = False,
+    tweet_id = None,
+    media = None,
+    like = None,
+    tag = None
+):
+    return get_tweets_helper_tag(
+        query = get_tweets_helper_like(
+            query = get_tweets_helper(
+                user_id = user_id,
+                user_name = user_name,
+                replay = replay,
+                tweet_id = tweet_id,
+                media = media
+            ),
+            user=user,
+            like=like,
+        ),
+        tag = tag
+    )
+    """
+    if user_name:
+        u = User.query.filter(User.name == user_name).first()
+        if u:
+            user_id = u.id
+    tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
+        .filter(Tweet.user_id == user_id if user_id else True) \
+        .filter(Tweet.tweet_id == None if not replay else True) \
+        .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
+        .filter(Tweet.content_type == "image" if media else True)
+    """
+    """
+    return get_tweets_helper_tag(tag=["helloworld", "test"], query=Tweet.query)
+    tweets = get_tweets_helper(
+        user_id = user_id,
+        user_name = user_name,
+        replay = replay,
+        tweet_id = tweet_id,
+        media = media,
+    )
+    """
     if like and user:
         """
         i don't like query
+        """
+        return get_tweets_helper_like(
+            query = get_tweets_helper(
+            user_id = user_id,
+            user_name = user_name,
+            replay = replay,
+            tweet_id = tweet_id,
+            media = media
+            ),
+            user=user,
+            like=like,
+        )
         """
         tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
         .filter(Tweet.user_id == user_id if user_id else True) \
@@ -515,6 +589,7 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
         .filter(Tweet.content_type == "image" if media else True) \
         .join(TweetLikes, (TweetLikes.tweet_id == Tweet.id)) \
         .filter(and_(TweetLikes.isLike == True, TweetLikes.user_id == user.id) if like and user else True)
+        """
 
     return tweets
 
