@@ -22,6 +22,7 @@ from werkzeug.utils import secure_filename
 
 from os import path
 import sys
+from mecab import wakati
 
 from tag import tag_parse
 
@@ -170,38 +171,11 @@ class Tweet(db.Model): # type: ignore
             "retweet": retweets,
         }
         return dict(self.to_object(), **data)
-"""tweet == (retweet && replay)
-class TweetReplies(db.Model): # type: ignore
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
-    replay_id = db.Column(db.Integer, db.ForeignKey("tweet_replies.id"))
-    text = db.Column(db.String())
-    content = db.Column(db.String())
-    content_type = db.Column(db.String())
-    timestamp = db.Column(db.DateTime, index=True, server_default=func.now())
-    def replays(self):
-        return TweetReplies.query.filter(TweetReplies.replay_id==self.id)
-    def to_object(self):
-        user = User.query.get(self.user_id)
-        return {
-            "id": self.id,
-            "tweet_id": self.tweet_id,
-            "user": user.to_object(),
-            "text": self.text,
-            "content": self.content,
-            "content_type": self.content_type,
-            "timestamp": self.timestamp,
-            "replay": to_objects(self.replays().all())
-        }
-"""
 
 class TweetLikes(db.Model): # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    #type = db.Column(db.String, default="") need?
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     tweet_id = db.Column(db.Integer, db.ForeignKey("tweet.id"))
-    #replay_id = db.Column(db.Integer, db.ForeignKey("tweet_replies.id"))
     isLike = db.Column(db.Boolean, default=True)
     def to_object(self):
         return {
@@ -321,6 +295,8 @@ def route_tweet_get():
         tweet_id = request_arg_int(request, "tweet"),
         media = request_arg_bool(request, "media"),
         like = request_arg_bool(request, "like"),
+        tag = request_arg(request, "tag"),
+        search = request_arg_bool(request, "q"),
     ).all()
     return jsonify({"data": to_objects(tweets, User.query.get(request_user()))})
 
@@ -519,6 +495,17 @@ def get_tweets_helper_tag(
     q = query.join(TweetTag, (TweetTag.tweet_id == Tweet.id)).filter(TweetTag.data == tag)
     return q
 
+def get_tweets_helper_search(
+    query,
+    word
+):
+    if not query or not word:
+        return query
+    word_wakati = wakati(word)
+    for w in word_wakati:
+        query = query.filter(Tweet.text.contains(w))
+    return query
+
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     user = None,
     start = None,
@@ -529,69 +516,26 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     tweet_id = None,
     media = None,
     like = None,
-    tag = None
+    tag = None,
+    search = None,
 ):
     return get_tweets_helper_tag(
         query = get_tweets_helper_like(
-            query = get_tweets_helper(
-                user_id = user_id,
-                user_name = user_name,
-                replay = replay,
-                tweet_id = tweet_id,
-                media = media
+            query = get_tweets_helper_search(
+                query = get_tweets_helper(
+                    user_id = user_id,
+                    user_name = user_name,
+                    replay = replay,
+                    tweet_id = tweet_id,
+                    media = media
+                ),
+                word = search
             ),
             user=user,
             like=like,
         ),
         tag = tag
     )
-    """
-    if user_name:
-        u = User.query.filter(User.name == user_name).first()
-        if u:
-            user_id = u.id
-    tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
-        .filter(Tweet.user_id == user_id if user_id else True) \
-        .filter(Tweet.tweet_id == None if not replay else True) \
-        .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
-        .filter(Tweet.content_type == "image" if media else True)
-    """
-    """
-    return get_tweets_helper_tag(tag=["helloworld", "test"], query=Tweet.query)
-    tweets = get_tweets_helper(
-        user_id = user_id,
-        user_name = user_name,
-        replay = replay,
-        tweet_id = tweet_id,
-        media = media,
-    )
-    """
-    if like and user:
-        """
-        i don't like query
-        """
-        return get_tweets_helper_like(
-            query = get_tweets_helper(
-            user_id = user_id,
-            user_name = user_name,
-            replay = replay,
-            tweet_id = tweet_id,
-            media = media
-            ),
-            user=user,
-            like=like,
-        )
-        """
-        tweets = Tweet.query.order_by(desc(Tweet.timestamp)) \
-        .filter(Tweet.user_id == user_id if user_id else True) \
-        .filter(Tweet.tweet_id == None if not replay else True) \
-        .filter(Tweet.tweet_id == tweet_id if tweet_id else True) \
-        .filter(Tweet.content_type == "image" if media else True) \
-        .join(TweetLikes, (TweetLikes.tweet_id == Tweet.id)) \
-        .filter(and_(TweetLikes.isLike == True, TweetLikes.user_id == user.id) if like and user else True)
-        """
-
-    return tweets
 
 def to_objects(data: list, user = None):
     if not len(data):
