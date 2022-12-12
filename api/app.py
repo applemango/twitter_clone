@@ -285,10 +285,8 @@ def route_tweet_post():
 @cross_origin()
 @jwt_required()
 def route_tweet_get():
-    tweets = get_tweets(
+    tweets = page(get_tweets(
         user = User.query.get(request_user()),
-        start = request_arg_int(request, "start"),
-        limit = request_arg_int(request, "limit"),
         replay = request_arg_bool(request, "reply"),
         user_id = request_arg_int(request, "user"),
         user_name = request_arg(request, "username"),
@@ -296,23 +294,9 @@ def route_tweet_get():
         media = request_arg_bool(request, "media"),
         like = request_arg_bool(request, "like"),
         tag = request_arg(request, "tag"),
-        search = request_arg_bool(request, "q"),
-    ).all()
+        search = request_arg(request, "q"),
+    ), request_arg_int(request, "p"), request_arg_int(request, "limit"))
     return jsonify({"data": to_objects(tweets, User.query.get(request_user()))})
-
-"""need?
-@app.route("/tweets/user/<user>", methods=["GET"])
-@cross_origin()
-@jwt_required()
-def route_tweet_user_get(user):
-    user = User.query.filter(User.name == user).first()
-    tweets = get_tweets(
-        start = request_arg_int(request, "start"),
-        limit = request_arg_int(request, "limit"),
-        user_id = user.id
-    ).all()
-    return jsonify({"data": to_objects(tweets)})
-"""
 
 @app.route("/tweets/<id>", methods=["GET"])
 @cross_origin()
@@ -391,7 +375,7 @@ def route_tweet_image_get(path):
 @cross_origin()
 @jwt_required()
 def route_messages_user_get():
-    user = User.query.filter(User.id != request_user()).all()
+    user = get_user_dm(User.query.get(request_user()))
     return jsonify({"data": to_objects(user, User.query.get(request_user()))})
 
 @app.route("/messages/<user>", methods=["GET"])
@@ -445,6 +429,13 @@ def socket_send_message_to_user(message):
 ###########################
 ###########################
 ###########################
+def get_user_dm(user: User):
+    return get_user_dm_from(user).union(get_user_dm_to(user))
+def get_user_dm_from(user: User):
+    return User.query.join(Message, (User.id == Message.to)).filter(Message.to == user.id)
+def get_user_dm_to(user: User):
+    return User.query.join(Message, (User.id == Message.send)).filter(Message.send == user.id)
+
 def tag_add(text: str, tweet: Tweet):
     tag = tag_parse(text)
     if len(tag) < 1:
@@ -499,6 +490,7 @@ def get_tweets_helper_search(
     query,
     word
 ):
+    print(word)
     if not query or not word:
         return query
     word_wakati = wakati(word)
@@ -506,10 +498,17 @@ def get_tweets_helper_search(
         query = query.filter(Tweet.text.contains(w))
     return query
 
+def page(
+    query,
+    page,
+    per_page,
+):
+    if not query or not page:
+        return query
+    return query.paginate(page=page, per_page=per_page or 15, error_out=False)
+
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     user = None,
-    start = None,
-    limit = None,
     user_id = None,
     user_name = None,
     replay = False,
