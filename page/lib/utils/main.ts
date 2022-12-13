@@ -20,7 +20,7 @@ export function getUrl (url: string, useToken: boolean = false): string {
 }
 
 export function getLink (url: string, path: string): string {
-    return `${url}?ref=${gzip(path)}`
+    return url.includes("?") ? `${url}&ref=${gzip(path)}` : `${url}?ref=${gzip(path)}`
 }
 export function getRef (ref: string | undefined): string {
     if(!ref)

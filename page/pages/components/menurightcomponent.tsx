@@ -2,7 +2,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { TypeUser } from "../../lib/types/type"
 import { get, getUrl } from "../../lib/utils/main"
-import { ButtonFollow } from "./components/components"
+import { ButtonFollow, LinkBack } from "./components/components"
 import styles from "./sass/menuright.module.scss"
 import UserIcon from "./usericon"
 import Usericon from "./usericon"
@@ -45,11 +45,11 @@ const Button = ({
     link: string
     children: any
 }) => {
-    return <Link href={link}>
+    return <LinkBack href={link}>
         <div className={styles.button}>
             {children}
         </div>
-    </Link>
+    </LinkBack>
 }
 
 const Trend = ({
@@ -66,6 +66,22 @@ const Trend = ({
     </div>
 }
 
+export const Tags = ({
+    tags,
+    max
+}:{
+    tags: Array<[string, number]>
+    max?: number
+}) => {
+    return <>
+    {!!(tags && tags.length) && quickSortTag(tags).reverse().filter((tag: [string, number], i:number) => !max || i<max).map((tag: [string, number], i:number)=>(
+            <Button link={`/search?q=${tag[0]}`}>
+                <Trend name={tag[0]} tweets={tag[1]} />
+            </Button>
+        ))}
+    </>
+}
+
 export const WhatsHappening = () => {
     const [tags, setTags] = useState<any>()
     useEffect(()=>{
@@ -77,15 +93,10 @@ export const WhatsHappening = () => {
         }
         r()
     },[])
-    console.log(tags)
     return <div className={styles.components}>
         <p className={styles.title}>What't happening</p>
-        {!!(tags && tags.length) && quickSortTag(tags).reverse().map((tag: [string, number], i:number)=>(
-            <Button link={"/"}>
-                <Trend name={tag[0]} tweets={tag[1]} />
-            </Button>
-        ))}
-        <Button link={"/"}>
+        <Tags max={5} tags={tags} />
+        <Button link={"/explore"}>
             <p className={styles.more}>Show more</p>
         </Button>
     </div>

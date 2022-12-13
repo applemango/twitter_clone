@@ -44,3 +44,30 @@
         }
     }
 }
+
+.ImgAlt {
+    position: relative;
+    .alt {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        width: 100%;
+        height: calc(100% - 5px);
+        bottom: 4px;
+        padding: 16px;
+        background: rgba(255,255,255, 0.1);
+        background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.4) 100%);
+        p {
+            margin: 0;
+            color: #fff;
+        }
+        p:first-child {
+            font-size: 14px;
+        }
+        p:last-child {
+            font-size: 24px;
+            font-weight: 700;
+        }
+    }
+}

@@ -2,7 +2,7 @@ import { getLink, getRef, getUrl } from "../../../lib/utils/main"
 import UserIcon from "../usericon"
 import styles from "./sass/components.module.scss"
 import Image from "next/image"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { TypeTweet } from "../../../lib/types/type"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -116,12 +116,11 @@ export const Img = ({
     name: string
 }) => {
     const l = getUrl(`/tweets/image/${name}`)
-    const loader = () => l
     return <div className={styles.img}>
             <Image
                 layout="fill"
                 objectFit="contain"
-                loader={loader}
+                loader={()=>l}
                 src={l}
                 alt={name}
                 style={{
@@ -139,4 +138,22 @@ export const ButtonFollow = ({
     return <button className={styles.ButtonFollow} onClick={(e: any) => onClick(e)}>
         <p>Follow</p>
     </button>
+}
+
+export const ImgAlt = ({
+    title,
+    subtitle,
+    content
+}:{
+    title: string
+    subtitle: string
+    content: string
+}) => {
+    return <div className={styles.ImgAlt}>
+        <Img name={content} />
+        <div className={styles.alt}>
+            <p>{subtitle}</p>
+            <p>{title}</p>
+        </div>
+    </div>
 }

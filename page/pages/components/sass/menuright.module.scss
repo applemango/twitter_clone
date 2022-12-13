@@ -1,6 +1,11 @@
-.components~.components{
-    .button:not(:last-child) {
-        padding: 16px;
+.button:not(:last-child) {
+    padding: 16px;
+}
+.button {
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    &:hover {
+        background-color: #eee;
     }
 }
 .components {
@@ -14,13 +19,6 @@
         font-size: 20px;
         font-weight: 700;
         color: #222;
-    }
-    .button {
-        padding: 8px 16px;
-        transition: all 0.3s ease;
-        &:hover {
-            background-color: #eee;
-        }
     }
     .more {
         margin: 6px 0;

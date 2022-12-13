@@ -512,7 +512,6 @@ def get_tweets_helper_search(
     query,
     word
 ):
-    print(word)
     if not query or not word:
         return query
     word_wakati = wakati(word)

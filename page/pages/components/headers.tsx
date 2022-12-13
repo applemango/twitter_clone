@@ -12,9 +12,11 @@ const Header = ({
     style = {},
     backLink = false,
     onBackClick = undefined,
-    menu = false
+    menu = false,
+    child,
 }:{
     children: any
+    child?: any
     useStyle?: boolean
     style?: any
     backLink?: boolean
@@ -54,6 +56,7 @@ const Header = ({
                     {onBackClick && <div onClick={() => onBackClick()} className={styles.backButton}><IconBack /></div>}
                     {children}
                 </div>
+                {child}
             </div>
         </div>
         {menu && <HeaderMenu show={showMenu} setShow={setShowMenu} />}
