@@ -11,7 +11,7 @@ const Tweets = ({
 }) => {
     return <>
         <ComponentsBorderBottom>
-            {tweets.map((tweet: TypeTweet, i:number) => {
+            {!!tweets && tweets.map((tweet: TypeTweet, i:number) => {
                 return <TweetReplays filter={filter} tweet={tweet} />
             })}
         </ComponentsBorderBottom>

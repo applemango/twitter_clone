@@ -39,3 +39,18 @@
         }
     }
 }
+
+.UserNameTowLine {
+    display: flex;
+    justify-content: space-between;
+    .left {
+        display: flex;
+        >*:first-child {
+            margin-right: 8px;
+        }
+    }
+    .right {
+        display: flex;
+        align-items: center;
+    }
+}

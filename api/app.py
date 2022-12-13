@@ -375,7 +375,7 @@ def route_tweet_image_get(path):
 @cross_origin()
 @jwt_required()
 def route_messages_user_get():
-    user = get_user_dm(User.query.get(request_user()))
+    user = get_user_dm(User.query.get(request_user())).all()
     return jsonify({"data": to_objects(user, User.query.get(request_user()))})
 
 @app.route("/messages/<user>", methods=["GET"])
@@ -393,6 +393,12 @@ def route_messages_get(user):
 def route_user_get(user):
     user = User.query.filter(User.name == user).first()
     return jsonify({"data": user.to_object_user(User.query.get(request_user()))})
+
+@app.route("/explore/trend", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_explore_trend_get():
+    return jsonify({"data": get_trend()})
 
 ###########################
 ###########################
@@ -429,6 +435,22 @@ def socket_send_message_to_user(message):
 ###########################
 ###########################
 ###########################
+def get_trend():
+    tweet = TweetTag.query.limit(1000).all()
+    tags = {}
+    for t in tweet:
+        if t.data in tags:
+            tags[t.data] += 1
+        else:
+            tags[t.data] = 1
+    tagss = sorted(tags.items(), key=lambda n: n[0], reverse=False)
+    """object->sort->list->object
+    tags = {}
+    for t in tagss:
+        tags[t[0]] = t[1]
+    """
+    return tagss
+
 def get_user_dm(user: User):
     return get_user_dm_from(user).union(get_user_dm_to(user))
 def get_user_dm_from(user: User):
@@ -504,8 +526,8 @@ def page(
     per_page,
 ):
     if not query or not page:
-        return query
-    return query.paginate(page=page, per_page=per_page or 15, error_out=False)
+        return query.all()
+    return query.paginate(page=page, per_page=per_page or 15, error_out=False).items
 
 def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
     user = None,

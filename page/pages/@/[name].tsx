@@ -52,7 +52,7 @@ export default function User() {
                   fontSize: 12,
                   margin: 0,
                   color: "#666"
-                }}>{`${tweets.length} Tweets`}</p>
+                }}>{`${tweets ? tweets.length : 0} Tweets`}</p>
               </div>
             </Headers>
             {<ComponentsBorderBottom>

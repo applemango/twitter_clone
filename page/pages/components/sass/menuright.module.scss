@@ -1,0 +1,48 @@
+.components~.components{
+    .button:not(:last-child) {
+        padding: 16px;
+    }
+}
+.components {
+    width: 100%;
+    background-color: #f5f5f5;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    .title {
+        padding: 16px 16px;
+        margin-bottom: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #222;
+    }
+    .button {
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+        &:hover {
+            background-color: #eee;
+        }
+    }
+    .more {
+        margin: 6px 0;
+        color: #1EA1F1;
+    }
+    >*:last-child :is(.button) {
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
+}
+
+.trend {
+    p {
+        margin: 0;
+    }
+    .location,.tweets {
+        font-size: 13px;
+        color: #666;
+    }
+    .name {
+        font-size: 17px;
+        font-weight: 500;
+        color: #111;
+    }
+}

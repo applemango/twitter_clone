@@ -40,3 +40,19 @@ export const UserNameHover = ({
         </LinkBack>
     </div>
 }
+
+export const UserNameTowLine = ({
+    user = TypeUserExample(),
+}:{
+    user?: TypeUser
+}) => {
+    return <div className={styles.UserNameTowLine}>
+        <div className={styles.left}>
+            <UserIcon name={user.icon} width={48} height={48} />
+            <UserNameMini name={user.name} />
+        </div>
+        <div className={styles.right}>
+            <ButtonFollow onClick={(e: any) => console.log(e)} />
+        </div>
+    </div>
+}
