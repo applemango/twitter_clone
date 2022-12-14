@@ -33,7 +33,7 @@ const Menu = ({
           <p className={text==active ? stylesMenu.active: ""}>{text}</p>
       </div>
   }
-  return <div className={stylesMenu.menu} style={{width: "fix-content"}}>
+  return <div className={stylesMenu.menu} style={{width: 560}}>
       <Button width={"80px"} text={"For you"}/>
       <Button width={"80px"} text={"Trending"}/>
       <Button width={"120px"} text={"World Cup"}/>

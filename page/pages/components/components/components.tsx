@@ -6,6 +6,9 @@ import { useEffect, useState } from "react"
 import { TypeTweet } from "../../../lib/types/type"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import Modal from 'react-modal'
+import { IconX } from "./icon"
+Modal.setAppElement('#__next')
 
 export const LinkBack = ({
     children,
@@ -156,4 +159,46 @@ export const ImgAlt = ({
             <p>{title}</p>
         </div>
     </div>
+}
+
+export const Modals = ({
+    children,
+    header,
+    isOpen = false,
+    setOpen = () => {}
+}:{
+    children: any,
+    header?: any,
+    isOpen?: boolean,
+    setOpen?: Function
+}) => {
+    const [open, setOpen_] = useState(false)
+    useEffect(()=>{
+        setOpen_(isOpen)
+    },[isOpen])
+    return <Modal
+    className={styles.Modals}
+    style={{
+        overlay: {
+            backgroundColor: "rgb(0 0 0 / 15%)",
+            zIndex: 100
+        },
+        content: {}
+    }}
+    isOpen={open}
+    onRequestClose={()=> {setOpen_(false);setOpen(false)}}
+    >
+        <div className={styles.header} style={{
+            display: 'flex',
+            alignItems: 'center'
+        }}>
+            <div className={styles.close} onClick={()=> {setOpen_(false);setOpen(false)}}>
+                <IconX />
+            </div>
+            {header}
+        </div>
+        <div>
+            {children}
+        </div>
+    </Modal>
 }

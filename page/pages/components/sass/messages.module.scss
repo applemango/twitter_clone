@@ -18,11 +18,35 @@
         }
     }
 }
-
+.searchUser {
+    transition: all 0.3s ease;
+    &:hover {
+        background-color: #f8f8f8;
+    }
+}
 .users {
     width: 350px;
     border-right: 1px solid #eee;
     min-height: 100vh;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+        .add {
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100%;
+            transition: all 0.3s ease;
+            &:hover {
+                background-color: #eee;
+            }
+        }
+    }
     .user {
         cursor: pointer;
         padding: 16px;

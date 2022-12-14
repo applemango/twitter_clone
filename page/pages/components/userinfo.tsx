@@ -43,16 +43,22 @@ export const UserNameHover = ({
 
 export const UserNameTowLine = ({
     user = TypeUserExample(),
+    follow = true,
+    iconSize = 42
 }:{
-    user?: TypeUser
+    user?: TypeUser,
+    follow?: boolean,
+    iconSize?: number
 }) => {
     return <div className={styles.UserNameTowLine}>
         <div className={styles.left}>
-            <UserIcon name={user.icon} width={48} height={48} />
+            <UserIcon name={user.icon} width={iconSize} height={iconSize} />
             <UserNameMini name={user.name} />
         </div>
-        <div className={styles.right}>
-            <ButtonFollow onClick={(e: any) => console.log(e)} />
-        </div>
+        { follow &&
+            <div className={styles.right}>
+                <ButtonFollow onClick={(e: any) => console.log(e)} />
+            </div>
+        }
     </div>
 }

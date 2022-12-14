@@ -400,6 +400,12 @@ def route_user_get(user):
 def route_explore_trend_get():
     return jsonify({"data": get_trend()})
 
+@app.route("/users/all" , methods=["GET"])
+@cross_origin()
+@jwt_required()
+def route_user_all_get():
+    return jsonify({"data": to_objects(User.query.all())})
+
 ###########################
 ###########################
 ###########################
@@ -454,9 +460,9 @@ def get_trend():
 def get_user_dm(user: User):
     return get_user_dm_from(user).union(get_user_dm_to(user))
 def get_user_dm_from(user: User):
-    return User.query.join(Message, (User.id == Message.to)).filter(Message.to == user.id)
+    return User.query.join(Message, (User.id == Message.send)).filter(Message.to == user.id)
 def get_user_dm_to(user: User):
-    return User.query.join(Message, (User.id == Message.send)).filter(Message.send == user.id)
+    return User.query.join(Message, (User.id == Message.to)).filter(Message.send == user.id)
 
 def tag_add(text: str, tweet: Tweet):
     tag = tag_parse(text)
