@@ -431,7 +431,7 @@ def route_user_update_post():
         "icon": request_data(request, "icon") or user.icon,
         "header": request_data(request, "header") or user.header
     }
-    user.display_name = data["name"]
+    user.name_display = data["name"]
     user.profile = data["bio"]
     user.location = data["location"]
     user.website = data["website"]
