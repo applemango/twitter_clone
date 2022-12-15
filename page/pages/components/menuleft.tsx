@@ -33,10 +33,11 @@ const MenuLeft = () => {
 const User = () => {
     const [t,sT]=useState("")
     const [e,sE]=useState("")
-    useEffect(()=>{sT(parseJwt(getToken(true))?.name);sE(parseJwt(getToken(false))?.icon)},[])
+    const [f,sF]=useState("")
+    useEffect(()=>{sT(parseJwt(getToken(true))?.name);sE(parseJwt(getToken(false))?.icon);sF(parseJwt(getToken(false))?.name_display)},[])
     return <div className={styles.button_user}>
         <Button icon={<UserIcon width={48} height={48} name={e} />}>
-            <UserNameMini name={t} />
+            <UserNameMini name={t} name_display={f} />
         </Button>
     </div>
 }

@@ -90,7 +90,7 @@ const User = ({
 }) => {
     return <div onClick={() => onClick(user.id)} className={styles.user}>
         <TweetIconLeft name={user.icon}>
-            <InfoTopOneLine name={user.name} timestamp={""} />
+            <InfoTopOneLine name_display={user.name_display} name={user.name} timestamp={""} />
         </TweetIconLeft>
     </div>
 }

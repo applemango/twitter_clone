@@ -6,13 +6,15 @@ import { UserProfileInfoFollower } from "./userprofile"
 
 export const UserNameMini = ({
     user = TypeUserExample(),
-    name,    
+    name,
+    name_display
 }:{
     user?: TypeUser
     name?: string
+    name_display?: string
 }) => {
     return <div className={styles.UserNameMini}>
-        <p className={styles.username}>{name ?? user.name}</p>
+        <p className={styles.username}>{name_display ?? user.name_display ?? name}</p>
         <p className={styles.accountname}>{`@${name ?? user.name}`}</p>
     </div>
 }
@@ -53,7 +55,7 @@ export const UserNameTowLine = ({
     return <div className={styles.UserNameTowLine}>
         <div className={styles.left}>
             <UserIcon name={user.icon} width={iconSize} height={iconSize} />
-            <UserNameMini name={user.name} />
+            <UserNameMini user={user} />
         </div>
         { follow &&
             <div className={styles.right}>

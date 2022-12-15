@@ -7,6 +7,7 @@ export type TypeToken = {
     nbf: number
     exp: number
     name: string
+    name_display: string
     icon: string
 }
 export const TypeTokenExample = ():TypeToken => {
@@ -19,6 +20,7 @@ export const TypeTokenExample = ():TypeToken => {
         nbf: 1670058923,
         exp: 1672650923,
         name: "undefined",
+        name_display: "none",
         icon: "icon.jpg"
     }
 }
@@ -41,7 +43,7 @@ export const TypeUserExample = ():TypeUser => {
     return {
         id: -1,
         name: "undefined",
-        name_display: "zero > undefined > null",
+        name_display: "none",
         icon: "",
         header: "",
         admin: false,

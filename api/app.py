@@ -92,7 +92,8 @@ class User(db.Model):  # type: ignore
     def to_claims(self):
         return {
             "name": self.name,
-            "icon": self.icon
+            "name_display": self.name_display,
+            "icon": self.icon,
         }
     def to_object(self):
         return {

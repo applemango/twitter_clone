@@ -111,7 +111,7 @@ const UserProfileInfo = ({
     user: TypeUser
 }) => {
     return <div className={styles.info}>
-        <h2 className={styles.info_username}>{user.name}</h2>
+        <h2 className={styles.info_username}>{user.name_display}</h2>
         <p className={styles.info_account_name}>{`@${user.name}`}</p>
         <div className={styles.info_date}>
             <div><IconCalender/></div>

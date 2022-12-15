@@ -15,7 +15,7 @@ export const TweetTopOneLine = ({
 }) => {
     return <div className={styles.TweetTopOneLine}>
         <UserNameHover user={tweet.user}>
-            <p className={styles.username}>{tweet.user_name}</p>
+            <p className={styles.username}>{tweet.user.name_display}</p>
         </UserNameHover>
         {/*<LinkBack href={`/@/${tweet.user.name}`}>
             <p className={styles.username}>{tweet.user_name}</p>
@@ -40,13 +40,15 @@ export const TweetTopTwoLine = ({
 
 export const InfoTopOneLine = ({
     name,
+    name_display,
     timestamp
 }:{
     name: string
+    name_display: string
     timestamp: string | number | Date
 }) => {
     return <div className={styles.TweetTopOneLine}>
-        <p className={styles.username}>{name}</p>
+        <p className={styles.username}>{name_display}</p>
         <div className={styles.info}>
             <p>{"@" + name}</p>
             <p>{dateConversion(timestamp)}</p>
