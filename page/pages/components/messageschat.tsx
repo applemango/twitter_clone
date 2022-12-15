@@ -44,7 +44,13 @@ const MessagesChat = ({
         })
     },[])
     if(location == -1)
-        return <div className={styles.chat} style={{width: "calc(100% - 350px)"}} />
+        return <div className={`${styles.chat} ${styles.none}`} style={{width: "calc(100% - 350px)"}}>
+            <div>
+                <p>Select a message</p>
+                <p>Choose from your existing conversations, start a new one, or just keep swimming.</p>
+                <button>New message</button>
+            </div>
+        </div>
     return <>
         <div className={styles.chat} style={{width: "calc(100% - 350px)"}}>
             <Messages setLocation={setLocation} messages={messages} />

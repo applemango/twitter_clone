@@ -53,7 +53,11 @@ followers = db.Table('followers',
 )
 class User(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
+    name_display = db.Column(db.String())
+    profile = db.Column(db.String())
+    location = db.Column(db.String(), default="japan")
+    website = db.Column(db.String())
     password = db.Column(db.String())
     icon = db.Column(db.String(), default="")
     header = db.Column(db.String(), default="")
@@ -94,12 +98,16 @@ class User(db.Model):  # type: ignore
         return {
             "id": self.id,
             "name": self.name,
+            "name_display": self.name_display,
             "icon": self.icon,
             "header": self.header,
             "joined": self.timestamp,
             "admin": self.admin,
             "follower": self.follower_count(),
-            "following": self.followed_count() 
+            "following": self.followed_count() ,
+            "profile": self.profile,
+            "location": self.location,
+            "website": self.website
         }
     def to_object_user(self, user):
         data = {
@@ -227,7 +235,9 @@ class Message(db.Model): # type: ignore
 @cross_origin()
 @jwt_required()
 def route_replay_post():
-    id = int(request_data(request, "id"))
+    id = int(request_data(request, "id") or -1)
+    if not id:
+        return jsonify({"tweet": None}), 400
     text = request_data(request, "text")
     content_type = request_data(request, "content_type")
     content = request_data(request, "content")
@@ -405,6 +415,30 @@ def route_explore_trend_get():
 @jwt_required()
 def route_user_all_get():
     return jsonify({"data": to_objects(User.query.all())})
+
+@app.route("/users/update", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_user_update_post():
+    user: User = User.query.get(request_user())
+    if not user:
+        return jsonify({"error": None}), 400
+    data = {
+        "name": request_data(request, "name") or user.name_display,
+        "bio": request_data(request, "bio") or user.profile,
+        "location": request_data(request, "location") or user.location,
+        "website": request_data(request, "website") or user.website,
+        "icon": request_data(request, "icon") or user.icon,
+        "header": request_data(request, "header") or user.header
+    }
+    user.display_name = data["name"]
+    user.profile = data["bio"]
+    user.location = data["location"]
+    user.website = data["website"]
+    user.icon = data["icon"]
+    user.header = data["header"]
+    db.session.commit()
+    return jsonify({"data": user.to_object_user(user)})
 
 ###########################
 ###########################
@@ -599,6 +633,13 @@ def request_arg_bool(request: Request, name: str):
     return False
 
 def request_data(request: Request, name: str):
+    try:
+        data = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])[name]
+        if data:
+            return data
+    except :
+        return None
+    return None
     return json.loads(json.loads(request.get_data().decode('utf-8'))["body"])[name]
 
 def request_user():

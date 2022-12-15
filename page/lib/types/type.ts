@@ -26,23 +26,31 @@ export const TypeTokenExample = ():TypeToken => {
 export type TypeUser = {
     id: number
     name: string
+    name_display: string
     icon: string
     header: string
     admin: boolean
     following: number
     follower: number
     joined: string
+    profile: string
+    location: string
+    website: string
 }
 export const TypeUserExample = ():TypeUser => {
     return {
         id: -1,
         name: "undefined",
+        name_display: "zero > undefined > null",
         icon: "",
         header: "",
         admin: false,
         follower: 1200,
         following: 100,
-        joined: "September 2000"
+        joined: "September 2000",
+        profile: "Hello, world!",
+        location: "japan",
+        website: "http://localhost:3000"
     }
 }
 

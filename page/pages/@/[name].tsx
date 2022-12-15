@@ -8,8 +8,12 @@ import UserProfile, { UserProfileMenu } from "../components/userprofile"
 import Tweets from "../components/tweets"
 import { get, getUrl } from "../../lib/utils/main"
 import { get_user } from "../../lib/res/user"
+import { getToken, parseJwt } from "../../lib/res/token"
 
 export default function User() {
+    const [me, setMe] = useState(false)
+    const [t,sT]=useState("")
+    useEffect(()=>{sT(parseJwt(getToken(true))?.name)},[])
     const [tweets, setTweets] = useState<Array<TypeTweet>>([])
     const [user, setUser] = useState<TypeUser>(TypeUserExample())
     const router = useRouter()
@@ -37,6 +41,10 @@ export default function User() {
       }
       rs()
     },[name])
+    useEffect(()=>{
+      if(user.name == t)
+        setMe(true)
+    },[user, t])
     return (
       <div>
         <Main children={
@@ -57,7 +65,7 @@ export default function User() {
             </Headers>
             {<ComponentsBorderBottom>
               <>
-                <UserProfile user={user} />
+                <UserProfile me={me} user={user} />
                 <UserProfileMenu onTweets={async () => {
                   setTweets(await req(`/tweets?username=${name}`))
                 }} onMedia={async () => {

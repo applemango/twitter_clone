@@ -48,6 +48,10 @@ export async function get(url: string,login: boolean = true, header: any = {}) {
         console.log(res)
         return res
     } catch (e:any) {
+        if (!e.response) {
+            console.error(e)
+            throw(e)
+        }
         if (e.response.status == 401) {
             const res = await logout()
         }
@@ -78,6 +82,10 @@ export async function post(url: string, body: any = {}, login: boolean = true, h
         console.log(res)
         return res
     } catch (e:any) {
+        if (!e.response) {
+            console.error(e)
+            throw(e)
+        }
         if (e.response.status == 401) {
             const res = await logout()
         }

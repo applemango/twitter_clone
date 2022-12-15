@@ -8,6 +8,8 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import Modal from 'react-modal'
 import { IconX } from "./icon"
+import Headers from "../headers"
+import TextareaAutosize from 'react-textarea-autosize';
 Modal.setAppElement('#__next')
 
 export const LinkBack = ({
@@ -188,17 +190,49 @@ export const Modals = ({
     isOpen={open}
     onRequestClose={()=> {setOpen_(false);setOpen(false)}}
     >
-        <div className={styles.header} style={{
-            display: 'flex',
-            alignItems: 'center'
-        }}>
-            <div className={styles.close} onClick={()=> {setOpen_(false);setOpen(false)}}>
-                <IconX />
+        <Headers style={{padding: 0, borderRadius: "24px 24px 0 0"}}>
+            <div className={styles.header} style={{
+                display: 'flex',
+                alignItems: 'center'
+            }}>
+                <div className={styles.close} onClick={()=> {setOpen_(false);setOpen(false)}}>
+                    <IconX />
+                </div>
+                {header}
             </div>
-            {header}
-        </div>
+        </Headers>
         <div>
             {children}
         </div>
     </Modal>
+}
+
+export const InputText = ({
+    onChange=()=>{},
+    value,
+    placeholder
+}:{
+    onChange?: Function
+    value?: string
+    placeholder?: string
+}) => {
+    return <div className={styles.InputText}>
+        <input value={value} onChange={(e) => onChange(e)} type="text" />
+        <p>{placeholder}</p>
+    </div>
+}
+
+export const InputTextArea = ({
+    onChange=()=>{},
+    value,
+    placeholder
+}:{
+    onChange?: Function
+    value?: string
+    placeholder?: string
+}) => {
+    return <div className={styles.InputTextArea}>
+        <TextareaAutosize className={`${styles.textarea} ${!value && styles.no}`} value={value} onChange={(e) => onChange(e)} />
+        <p>{placeholder}</p>
+    </div>
 }
