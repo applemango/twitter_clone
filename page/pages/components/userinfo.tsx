@@ -37,6 +37,7 @@ export const UserNameHover = ({
                     <div><ButtonFollow onClick={(e: any) => {e.preventDefault();}} /></div>
                 </div>
                 <UserNameMini user={user} />
+                <p>{user.profile}</p>
                 <UserProfileInfoFollower user={user} />
             </div>
         </LinkBack>

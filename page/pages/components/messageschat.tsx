@@ -33,6 +33,8 @@ const MessagesChat = ({
     },[location])
     useEffect(() => {
         socket.on("message_from_user", (msg: any) => {
+            if (msg.to && msg.send && msg.to.id == msg.send.id)// me to me
+                return
             if(messages && (messages[messages.length - 1].id == msg.id))
                 return
             setMessages((messages) => messages ? [...messages, msg]: [msg])

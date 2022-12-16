@@ -441,6 +441,12 @@ def route_user_update_post():
     db.session.commit()
     return jsonify({"data": user.to_object_user(user)})
 
+@app.route("/users/follow/<user>", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def route_user_follow(user):
+    pass
+
 ###########################
 ###########################
 ###########################
