@@ -1,5 +1,5 @@
 import { TypeTweet } from "../../lib/types/type"
-import { ComponentsBorderBottom, TweetIconLeft } from "./components/components"
+import { ComponentsBorderBottom, TweetIconLeft, TweetIconLeftBorderEnd } from "./components/components"
 import styles from "./sass/tweet.module.scss"
 import TweetContent from "./tweetcontent"
 import { TweetBottomMultipleLineData, TweetBottomMultipleLineDate, TweetBottomMultipleLineTooltip, TweetBottomOneLine, TweetTopOneLine, TweetTopTwoLine } from "./tweetinfo"
@@ -9,14 +9,20 @@ import { UserNameMini } from "./userinfo"
 
 const TweetBig = ({
     tweet,
-    setReplays=()=>{}
+    setReplays=()=>{},
+    isReplay
 }:{
     tweet: TypeTweet,
-    setReplays?: Function
+    setReplays?: Function,
+    isReplay?: boolean
 }) => {
     console.log(tweet)
-    return <div className={styles.big}>
-        <TweetTopTwoLine tweet={tweet} />
+    return <>
+    <div className={styles.big} style={isReplay ? {paddingTop: 0} : {}}>
+        {isReplay ? <div className={styles.TweetTopTwoLine}>
+            <TweetIconLeftBorderEnd name={tweet.user.icon} />
+            <div style={{paddingTop: 16}}><UserNameMini user={tweet.user} /></div>
+        </div> : <TweetTopTwoLine tweet={tweet} />}
         <TweetBigText tweet={tweet} />
         <TweetContent tweet={tweet}/>
         <ComponentsBorderBottom>
@@ -26,6 +32,7 @@ const TweetBig = ({
             <TweetReplayForm tweet={tweet} setReplays={setReplays} />
         </ComponentsBorderBottom>
     </div>
+    </>
 }
 
 const TweetBigText = ({tweet}:{tweet: TypeTweet}) => {

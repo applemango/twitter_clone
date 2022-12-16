@@ -11,9 +11,11 @@ const IconPlanet = () => <svg xmlns="http://www.w3.org/2000/svg" className="icon
 const IconDown = () => <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-down" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#1EA1F1" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 9 12 15 18 9" /></svg>
 
 const TweetForm = ({
-    setTweets
+    setTweets,
+    onTweets
 }:{
-    setTweets: Function
+    setTweets?: Function
+    onTweets?: Function
 }) => {
     const [active, setActive] = useState(false)
     const [text, setText] = useState("")
@@ -36,7 +38,10 @@ const TweetForm = ({
             <TweetFormTooltip onTweet={() => {
                 const r = async () => {
                     const res = await post_tweet(text, content, contentType)
-                    setTweets((value: any) => [res, ...value])
+                    if (setTweets)
+                        setTweets((value: any) => [res, ...value])
+                    if (onTweets)
+                        onTweets(res)
                 }
                 setText("")
                 setContentType("")

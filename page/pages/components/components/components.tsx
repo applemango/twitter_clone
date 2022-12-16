@@ -67,7 +67,7 @@ export const TweetIconLeftBorder = ({
 }) => {
     return <div className={styles.TweetIconBorderStart} style={Object.assign({display: "flex"}, style)}>
         <div className={styles.border} style={Object.assign({marginRight: 10}, styleLeft)}>
-            <UserIcon name={name} width={42} height={42} />
+            <UserIcon name={name} width={48} height={48} />
         </div>
         <div style={Object.assign({
             width: "100%",
@@ -90,7 +90,7 @@ export const TweetIconLeftBorderEnd = ({
     children
 }:{
     name?: string
-    children: any
+    children?: any
 }) => <TweetIconLeftBorder name={name} children={children} styleLeft={{paddingTop: 16, height: "fit-content"}} styleRight={{paddingTop: 16}}  />
 
 export const ComponentsBorderBottom = ({

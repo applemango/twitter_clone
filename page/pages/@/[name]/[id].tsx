@@ -73,16 +73,18 @@ export default function User() {
             {<ComponentsBorderBottom>
               <>
                 { !!(top && top.length) && top.map((t: TypeTweet, i: number) => (
-                  <LinkBack href={`/@/${t.user.name}/${t.id}`}>
-                    <Tc n={i} icon={t.user.icon}>
-                      <TweetTopOneLine tweet={t} />
-                      <TweetText tweet={t} />
-                      <TweetContent tweet={t} />
-                      <TweetBottomOneLine tweet={t} />
-                    </Tc>
-                  </LinkBack>
+                  <div style={{padding: "0 16px"}}>
+                    <LinkBack href={`/@/${t.user.name}/${t.id}`}>
+                      <Tc n={i} icon={t.user.icon}>
+                        <TweetTopOneLine tweet={t} />
+                        <TweetText tweet={t} />
+                        <TweetContent tweet={t} />
+                        <TweetBottomOneLine tweet={t} />
+                      </Tc>
+                    </LinkBack>
+                  </div>
                 ))}
-                <TweetBig setReplays={setReplays} tweet={tweet} />
+                <TweetBig isReplay={!!(top && top.length)} setReplays={setReplays} tweet={tweet} />
               </>
               <Tweets filter={(t: TypeTweet) => true} tweets={replays} />
             </ComponentsBorderBottom>}

@@ -2,11 +2,15 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { getToken, parseJwt } from "../../lib/res/token"
+import { Modals } from "./components/components"
 import { IconBookmarks, IconBookmarksBold, IconExplore, IconExploreBold, IconHome, IconHomeBold, IconLists, IconListsBold, IconMessages, IconMessagesBold, IconMore, IconNotifications, IconNotificationsBold, IconProfile, IconProfileBold, IconTwitter } from "./components/icon"
 import styles from "./sass/menuleft.module.scss"
+import TweetForm from "./tweetform"
 import UserIcon from "./usericon"
 import { UserNameMini } from "./userinfo"
 const MenuLeft = () => {
+    const [showTweetForm, setShowTweetForm] = useState(false)
+
     const [t,sT]=useState("")
     useEffect(()=>{sT(parseJwt(getToken(true))?.name)},[])
     return <div className={styles.main}>
@@ -22,12 +26,34 @@ const MenuLeft = () => {
             <Button icon={IconMore()}>
                 <p style={{fontWeight: 400}}>More</p>
             </Button>
-            <button className={styles.button_tweet}>
+            <button onClick={()=> setShowTweetForm(true)} className={styles.button_tweet}>
                 <p>Tweet</p>
             </button>
         </div>
         <User />
+        <TweetFormModal show={showTweetForm} setShow={setShowTweetForm} />
     </div>
+}
+
+const TweetFormModal = ({
+    show,
+    setShow=()=>{}
+}:{
+    show?: boolean
+    setShow?: Function
+}) => {
+    const [t,sT]=useState("")
+    const [e,sE]=useState("")
+    const [f,sF]=useState("")
+    useEffect(()=>{sT(parseJwt(getToken(true))?.name);sE(parseJwt(getToken(false))?.icon);sF(parseJwt(getToken(false))?.name_display)},[])
+    return <Modals header={
+        <div style={{display: "flex", justifyContent: "space-between", width: "100%", paddingRight: "8px", alignItems: "center"}}>
+        </div>
+        } isOpen={show} setOpen={setShow}>
+            <div style={{margin: "0 24px", paddingBottom: "12px"}}>
+                <TweetForm onTweets={() => setShow(false)} />
+            </div>
+        </Modals>
 }
 
 const User = () => {
