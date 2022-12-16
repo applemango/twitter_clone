@@ -445,15 +445,17 @@ def route_user_update_post():
 @cross_origin()
 @jwt_required()
 def route_user_follow(user_id):
-    user = User.query.filter(User.id == user_id).first()
-    me = User.query.get(request_user)
+    user = User.query.get(int(user_id))
+    me = User.query.get(request_user())
     if not user or not me:
         return jsonify({"error": None})
     isf = me.is_following(user)
-    if isf:
+    if not isf:
         me.follow(user)
+        db.session.commit()
         return jsonify({"user": user.to_object_user(me)})
     me.unfollow(user)
+    db.session.commit()
     return jsonify({"user": user.to_object_user(me)})
 
 ###########################

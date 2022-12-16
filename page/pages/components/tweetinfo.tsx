@@ -64,12 +64,14 @@ export const TweetBottomOneLine = ({
     const [replay, setReplay] = useState(tweet.replayed)
     const [retweet, setRetweet] = useState(tweet.retweeted)
     const [like, setLike] = useState(tweet.liked)
-    const Button = ({icon,text,color,active}:{icon:any,text: string,color?:string,active?:boolean}) => {
-        return <div style={{"--color-": `${color}1a` ?? "#eee"} as React.CSSProperties} className={`${active ? styles.active : ""} ${styles.button}`}>
-            <div style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>
-                {icon}
+    const Button = ({icon,onClick=()=>{},text,color,active}:{icon:any,onClick?:Function,text: string,color?:string,active?:boolean}) => {
+        return <div style={{width: "25%"}}>
+            <div onClick={(e: any) => onClick(e)} style={{"--color-": `${color}1a` ?? "#eee"} as React.CSSProperties} className={`${active ? styles.active : ""} ${styles.button}`}>
+                <div style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>
+                    {icon}
+                </div>
+                <p style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>{text}</p>
             </div>
-            <p style={{"--color": color ?? "#9e9e9e"} as React.CSSProperties}>{text}</p>
         </div>
     }
     useEffect(() => {
@@ -79,8 +81,20 @@ export const TweetBottomOneLine = ({
     },[tweet])
     return <div className={styles.TweetBottomOneLine}>
         <Button active={replay} color={"#1d9bf0"}  icon={IconReplay()} text={tweet.replays.toString()}/>
-        <Button active={retweet} color={"#00ba7c"}  icon={IconRetweet()} text={tweet.retweets.toString()}/>
-        <Button active={like} color={"#f91880"}  icon={IconLike()} text={tweet.likes.toString()}/>
+        <Button active={retweet} color={"#00ba7c"} onClick={async (e: any) => {
+            e.preventDefault();
+            const res = await post_tweet("", String(tweet.id), "retweet")
+            if(!res) {
+                setRetweet(false)
+                return
+            }
+            setRetweet(true)
+        }} icon={IconRetweet()} text={tweet.retweets.toString()}/>
+        <Button active={like} color={"#f91880"} onClick={async (e: any)=> {
+            e.preventDefault();
+            const res = await post(getUrl(`/tweets/${tweet.id}/like`))
+            setLike(res.data.data.like)
+        }}  icon={IconLike()} text={tweet.likes.toString()}/>
         <Button color={"#1d9bf0"}  icon={IconShare()} text={""}/>
     </div>
 }

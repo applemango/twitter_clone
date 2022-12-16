@@ -136,12 +136,14 @@ export const Img = ({
 }
 
 export const ButtonFollow = ({
-    onClick = () => {}
+    onClick = () => {},
+    following = false
 }:{
     onClick?: Function
+    following?: boolean
 }) => {
-    return <button className={styles.ButtonFollow} onClick={(e: any) => onClick(e)}>
-        <p>Follow</p>
+    return <button className={`${styles.ButtonFollow} ${following && styles.following}`} onClick={(e: any) => onClick(e)}>
+        <p>{following ? "Following" : "Follow"}</p>
     </button>
 }
 

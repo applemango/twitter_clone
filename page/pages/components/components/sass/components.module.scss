@@ -22,13 +22,40 @@
     border-radius: 100px;
     background-color: #333;
     transition: all .3s ease;
+    border: 1px solid #333;
     &:hover {
         background-color: #444;
     }
+    &.following {
+        background-color: #fff;
+        border: 1px solid #eee;
+        &:hover {
+            position: relative;
+            background-color: #F5005720;
+            border: 1px solid #F48FB1;
+            &::after {
+                content: "Unfollow";
+                position: absolute;
+                font-weight: 500;
+                font-size: 15px;
+                top: 8px;
+                left: 21px;
+                color: #dc1f42;
+            }
+            > p {
+                visibility: hidden;
+            }
+        }
+        > p {
+            color: #222;
+            font-weight: 500;
+            font-size: 15px;
+        }
+    }
     >p {
         margin: 0;
-        font-size: 16px;
-        font-weight: 500;
+        font-size: 15px;
+        font-weight: 600;
         color: #fff;
     }
 }

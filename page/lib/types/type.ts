@@ -32,6 +32,7 @@ export type TypeUser = {
     icon: string
     header: string
     admin: boolean
+    follow: boolean
     following: number
     follower: number
     joined: string
@@ -44,6 +45,7 @@ export const TypeUserExample = ():TypeUser => {
         id: -1,
         name: "undefined",
         name_display: "none",
+        follow: false,
         icon: "",
         header: "",
         admin: false,

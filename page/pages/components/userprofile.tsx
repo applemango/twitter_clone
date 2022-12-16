@@ -27,11 +27,18 @@ const UserProfile = ({
     me?: boolean
 }) => {
     const [showEditProfile, setShowEditProfile] = useState(false)
+    const [following, setFollowing] = useState(false)
+    useEffect(()=>{setFollowing(user.follow)},[user])
     return <div>
         <UserProfileModal user={user} show={showEditProfile} setShow={setShowEditProfile} me={me}/>
         <UserHeader user={user}>
             <div className={styles.header_children}>
-                {me ? <ButtonEditProfile onClick={()=> setShowEditProfile(true)} /> : <ButtonFollow onClick={(e: any) => console.log(e)} />}
+                {me ? <ButtonEditProfile onClick={()=> setShowEditProfile(true)} /> : <ButtonFollow following={following} onClick={async (e: any) => {
+                    const res = await post(getUrl(`/users/follow/${user.id}`))
+                    if (res && res.data.user)
+                        setFollowing(res.data.user.follow)
+                    console.log(res.data.user.follow)
+                }} />}
             </div>
         </UserHeader>
         <UserProfileInfo user={user} />
