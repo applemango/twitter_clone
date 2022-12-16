@@ -441,11 +441,20 @@ def route_user_update_post():
     db.session.commit()
     return jsonify({"data": user.to_object_user(user)})
 
-@app.route("/users/follow/<user>", methods=["POST"])
+@app.route("/users/follow/<user_id>", methods=["POST"])
 @cross_origin()
 @jwt_required()
-def route_user_follow(user):
-    pass
+def route_user_follow(user_id):
+    user = User.query.filter(User.id == user_id).first()
+    me = User.query.get(request_user)
+    if not user or not me:
+        return jsonify({"error": None})
+    isf = me.is_following(user)
+    if isf:
+        me.follow(user)
+        return jsonify({"user": user.to_object_user(me)})
+    me.unfollow(user)
+    return jsonify({"user": user.to_object_user(me)})
 
 ###########################
 ###########################
