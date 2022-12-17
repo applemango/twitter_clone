@@ -15,7 +15,7 @@ export const TweetTopOneLine = ({
 }) => {
     return <div className={styles.TweetTopOneLine}>
         <UserNameHover user={tweet.user}>
-            <p className={styles.username}>{tweet.user.name_display}</p>
+            <p className={styles.username}>{tweet.user.name_display ? tweet.user.name_display : tweet.user.name}</p>
         </UserNameHover>
         {/*<LinkBack href={`/@/${tweet.user.name}`}>
             <p className={styles.username}>{tweet.user_name}</p>

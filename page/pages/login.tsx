@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import { useState } from "react"
-import { login } from "../lib/res/token"
+import { login, signUp } from "../lib/res/token"
 
 const Login = () => {
     const router = useRouter()
@@ -17,7 +17,13 @@ const Login = () => {
             }
             t()
         }}>login</button>
-        <button>register</button>
+        <button onClick={async () => {
+            const res = await signUp(username, password)
+            if(!(res.msg == "success")) return
+            const ress = await login(username, password)
+            if(!(res.msg == "success")) return
+            router.replace("/")
+        }}>register</button>
     </div>
 }
 export default Login

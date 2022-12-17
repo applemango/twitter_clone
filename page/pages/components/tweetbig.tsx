@@ -16,9 +16,8 @@ const TweetBig = ({
     setReplays?: Function,
     isReplay?: boolean
 }) => {
-    console.log(tweet)
     return <>
-    <div className={styles.big} style={isReplay ? {paddingTop: 0} : {}}>
+    <div className={styles.big} style={isReplay ? {paddingTop: 0}:{}}>
         {isReplay ? <div className={styles.TweetTopTwoLine}>
             <TweetIconLeftBorderEnd name={tweet.user.icon} />
             <div style={{paddingTop: 16}}><UserNameMini user={tweet.user} /></div>

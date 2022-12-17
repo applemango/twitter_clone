@@ -11,7 +11,7 @@ import Messages from './components/messages'
 import MessagesChat from './components/messageschat'
 import styles from "./components/sass/messages.module.scss"
 
-const socket = io("ws://127.0.0.1:5000", {
+const socket = io("ws://192.168.1.2:6500", {
     query : {
         token: getToken()
     }

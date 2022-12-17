@@ -11,10 +11,10 @@ export function getUrl (url: string, useToken: boolean = false): string {
                 return ""
             }
             const host = location.host.split(':')[0];
-            return `${location.protocol}//${host}:5000/${url}${useToken ? and + token : ""}`
+            return `${location.protocol}//${host}:6500/${url}${useToken ? and + token : ""}`
         }
         const host = location.host.split(':')[0];
-        return `${location.protocol}//${host}:5000/${url}`
+        return `${location.protocol}//${host}:6500/${url}`
     }
     return ""
 }
