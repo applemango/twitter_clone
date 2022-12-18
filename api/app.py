@@ -40,7 +40,7 @@ app.config.from_mapping(
     ,JWT_TOKEN_LOCATION = ["headers"]
     ,JSON_AS_ASCII = False
 )
-socketIo = SocketIO(app, cors_allowed_origins="*")
+socketIo = SocketIO(app, cors_allowed_origins="*", ssl_context=('./ssl/localhost.crt', './ssl/localhost.key'))
 cors = CORS(app, responses={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
@@ -781,5 +781,5 @@ def token_block(_jwt_header, jwt_data):
     return False
 
 if __name__ == '__main__':
-
-    app.run(debug=True, host='0.0.0.0', port=6500)
+    #app.run(debug=True, host='0.0.0.0', port=6500, ssl_context=('./ssl/localhost.crt', './ssl/localhost.key'))
+    socketIo.run(app, debug=True, host='0.0.0.0', port=6500, ssl_context=('./ssl/localhost.crt', './ssl/localhost.key'))
