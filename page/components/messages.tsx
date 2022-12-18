@@ -1,4 +1,4 @@
-import { TypeMessage } from "../../lib/types/type"
+import { TypeMessage } from "../lib/types/type"
 import Message from "./message";
 import styles from "./sass/messages.module.scss";
 
@@ -32,7 +32,7 @@ const Messages = ({
           }}>Messages</h1>
         </Header>
         {(!!messages && !!messages.length) && messages.map((message: TypeMessage, i: number) => (
-            <Message message={message} />
+            <Message key={i} message={message} />
         ))}
     </div>
 }

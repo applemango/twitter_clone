@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { post_image } from "../../lib/res/content"
-import { TypeUser } from "../../lib/types/type"
+import { post_image } from "../lib/res/content"
+import { TypeUser } from "../lib/types/type"
 import { Img } from "./components/components"
 import { IconUpload, IconX } from "./components/icon"
 import styles from "./sass/userprofile.module.scss"

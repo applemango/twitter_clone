@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { get_messages_user } from "../../lib/res/messages"
-import { TypeUser } from "../../lib/types/type"
-import { get, getUrl } from "../../lib/utils/main"
+import { get_messages_user } from "../lib/res/messages"
+import { TypeUser } from "../lib/types/type"
+import { get, getUrl } from "../lib/utils/main"
 import { Modals, TweetIconLeft } from "./components/components"
 import { IconAddUser, IconSettings } from "./components/icon"
 import Header from "./headers"
@@ -49,7 +49,7 @@ const MessagesUser = ({
     } isOpen={isOpen} setOpen={setIsOpen}>
         <div style={{borderTop: "1px solid #eee"}}>
         { (searchUsers && !!searchUsers.length) && searchUsers.map((user: TypeUser, i:number) => (
-            <div onClick={()=>{
+            <div key={i} onClick={()=>{
                 onChange(user.id)
                 setIsOpen(false)
             }} className={styles.searchUser} style={{padding: "8px 16px",cursor: "pointer"}}>
@@ -74,7 +74,7 @@ const MessagesUser = ({
         </Header>
         <div>
             { (users && !!users.length) && users.map((user: TypeUser, i:number) => (
-                <User onClick={(e: number) => onChange(e)} user={user} />
+                <User key={i} onClick={(e: number) => onChange(e)} user={user} />
             ))}
         </div>
     </div>

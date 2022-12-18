@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getToken, parseJwt } from "../../lib/res/token"
+import { getToken, parseJwt } from "../lib/res/token"
 import { Img } from "./components/components"
 import styles from "./sass/usericon.module.scss"
 const UserIcon = ({

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import { post_image } from "../../lib/res/content"
+import { post_image } from "../lib/res/content"
 import { IconGif, IconPhoto, IconPoll, IconVideo } from "./components/icon"
 import styles from "./sass/tweetform.module.scss"
 const TweetFormTooltip = ({

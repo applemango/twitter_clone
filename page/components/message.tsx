@@ -1,6 +1,6 @@
-import { getToken, parseJwt } from "../../lib/res/token"
-import { TypeMessage } from "../../lib/types/type"
-import { dateConversion } from "../../lib/utils/date"
+import { getToken, parseJwt } from "../lib/res/token"
+import { TypeMessage } from "../lib/types/type"
+import { dateConversion } from "../lib/utils/date"
 
 import styles from "./sass/messages.module.scss"
 import { TweetContentImage } from "./tweetcontent"

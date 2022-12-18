@@ -1,9 +1,9 @@
-import { getLink, getRef, getUrl } from "../../../lib/utils/main"
+import { getLink, getRef, getUrl } from "../../lib/utils/main"
 import UserIcon from "../usericon"
 import styles from "./sass/components.module.scss"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { TypeTweet } from "../../../lib/types/type"
+import { TypeTweet } from "../../lib/types/type"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import Modal from 'react-modal'
@@ -83,7 +83,9 @@ export const TweetIconLeftBorderAll = ({
 }:{
     name?: string
     children: any
-}) => <TweetIconLeftBorder name={name} children={children} styleLeft={{paddingTop: 16}} styleRight={{paddingTop: 16}}  />
+}) => <TweetIconLeftBorder name={name} styleLeft={{paddingTop: 16}} styleRight={{paddingTop: 16}}>
+    {children}
+</TweetIconLeftBorder>
 
 export const TweetIconLeftBorderEnd = ({
     name,
@@ -91,7 +93,9 @@ export const TweetIconLeftBorderEnd = ({
 }:{
     name?: string
     children?: any
-}) => <TweetIconLeftBorder name={name} children={children} styleLeft={{paddingTop: 16, height: "fit-content"}} styleRight={{paddingTop: 16}}  />
+}) => <TweetIconLeftBorder name={name} styleLeft={{paddingTop: 16, height: "fit-content"}} styleRight={{paddingTop: 16}}>
+    {children}
+</TweetIconLeftBorder>
 
 export const ComponentsBorderBottom = ({
     children,

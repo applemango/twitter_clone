@@ -1,11 +1,11 @@
 import { useRouter } from "next/router"
 import { useEffect, useState } from 'react'
 import { TypeTweet, TypeUser, TypeUserExample } from '../../lib/types/type'
-import { ComponentsBorderBottom } from '.././components/components/components'
-import Headers from '.././components/headers'
+import { ComponentsBorderBottom } from '../../components/components/components'
+import Headers from '../../components/headers'
 import Main from '.././layout/main'
-import UserProfile, { UserProfileMenu } from "../components/userprofile"
-import Tweets from "../components/tweets"
+import UserProfile, { UserProfileMenu } from "../../components/userprofile"
+import Tweets from "../../components/tweets"
 import { get, getUrl } from "../../lib/utils/main"
 import { get_user } from "../../lib/res/user"
 import { getToken, parseJwt } from "../../lib/res/token"
@@ -47,8 +47,8 @@ export default function User() {
     },[user, t])
     return (
       <div>
-        <Main children={
-          <>
+        <Main>
+        <>
             <Headers backLink={true}>
               <div>
                 <h1 style={{
@@ -79,7 +79,7 @@ export default function User() {
               <Tweets tweets={tweets} />
             </ComponentsBorderBottom>}
           </>
-      } />
+        </Main>
       </div>
     )
 }

@@ -1,18 +1,18 @@
 import { useRouter } from "next/router"
 import { useEffect, useState } from 'react'
 import { TypeTweet, TypeTweetExample, TypeUser } from '../../../lib/types/type'
-import { ComponentsBorderBottom, LinkBack, TweetIconLeftBorder, TweetIconLeftBorderAll } from '../.././components/components/components'
-import Headers from '../.././components/headers'
+import { ComponentsBorderBottom, LinkBack, TweetIconLeftBorder, TweetIconLeftBorderAll } from '../../../components/components/components'
+import Headers from '../../../components/headers'
 import Main from '../.././layout/main'
-import UserProfile, { UserProfileMenu } from "../../components/userprofile"
-import Tweets from "../../components/tweets"
+import UserProfile, { UserProfileMenu } from "../../../components/userprofile"
+import Tweets from "../../../components/tweets"
 import { get, getUrl } from "../../../lib/utils/main"
 import { get_user } from "../../../lib/res/user"
-import { TweetText } from "../../components/tweet"
-import TweetContent from "../../components/tweetcontent"
-import Tweetbig from "../../components/tweetbig"
-import TweetBig from "../../components/tweetbig"
-import { TweetBottomOneLine, TweetTopOneLine } from "../../components/tweetinfo"
+import { TweetText } from "../../../components/tweet"
+import TweetContent from "../../../components/tweetcontent"
+import Tweetbig from "../../../components/tweetbig"
+import TweetBig from "../../../components/tweetbig"
+import { TweetBottomOneLine, TweetTopOneLine } from "../../../components/tweetinfo"
 
 export default function User() {
     const [replays, setReplays] = useState<Array<TypeTweet>>([])
@@ -61,8 +61,8 @@ export default function User() {
     }
     return (
       <div>
-        <Main children={
-          <>
+        <Main>
+        <>
             <Headers backLink={true}>
               <h1 style={{
                 fontSize: 18,
@@ -73,7 +73,7 @@ export default function User() {
             {<ComponentsBorderBottom>
               <>
                 { !!(top && top.length) && top.map((t: TypeTweet, i: number) => (
-                  <div style={{padding: "0 16px"}}>
+                  <div key={i} style={{padding: "0 16px"}}>
                     <LinkBack href={`/@/${t.user.name}/${t.id}`}>
                       <Tc n={i} icon={t.user.icon}>
                         <TweetTopOneLine tweet={t} />
@@ -89,7 +89,7 @@ export default function User() {
               <Tweets filter={(t: TypeTweet) => true} tweets={replays} />
             </ComponentsBorderBottom>}
           </>
-      } />
+        </Main>
       </div>
     )
 }

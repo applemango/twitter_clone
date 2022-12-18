@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { get_tweet } from "../../lib/res/tweet"
-import { TypeTweet } from "../../lib/types/type"
+import { get_tweet } from "../lib/res/tweet"
+import { TypeTweet } from "../lib/types/type"
 import Tweets from "./tweets"
 
 const Timeline = ({

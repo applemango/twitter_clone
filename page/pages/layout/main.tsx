@@ -1,9 +1,9 @@
 import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { getToken } from "../../lib/res/token"
-import HeaderNavigator from "../components/headersnavigator"
-import MenuLeft from "../components/menuleft"
-import MenuRight from "../components/menuright"
+import HeaderNavigator from "../../components/headersnavigator"
+import MenuLeft from "../../components/menuleft"
+import MenuRight from "../../components/menuright"
 import styles from "./sass/main.module.scss"
 const Main = ({
     children,

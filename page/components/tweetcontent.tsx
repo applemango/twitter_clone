@@ -1,7 +1,7 @@
-import { getUrl } from "../../lib/utils/main";
+import { getUrl } from "../lib/utils/main";
 import styles from "./sass/tweetcontent.module.scss"
 import Image from "next/image";
-import { TypeTweet } from "../../lib/types/type";
+import { TypeTweet } from "../lib/types/type";
 import Tweet from "./tweet";
 
 const TweetContent = ({

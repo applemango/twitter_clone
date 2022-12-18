@@ -1,15 +1,15 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { ComponentsBorderBottom, Img, ImgAlt } from './components/components/components'
-import TweetForm from './components/tweetform'
+import { ComponentsBorderBottom, Img, ImgAlt } from '../components/components/components'
+import TweetForm from '../components/tweetform'
 import Main from './layout/main'
-import Headers from './components/headers'
-import Search from './components/seatch'
-import stylesMenu from "./components/sass/userprofile.module.scss"
+import Headers from '../components/headers'
+import Search from '../components/seatch'
+import stylesMenu from "../components/sass/userprofile.module.scss"
 import { useEffect, useState } from 'react'
 import { get, getUrl } from '../lib/utils/main'
-import { Tags } from './components/menurightcomponent'
+import { Tags } from '../components/menurightcomponent'
 
 const Menu = ({
 
@@ -58,19 +58,21 @@ export default function Home() {
   },[])
   return (
     <div>
-      <Main children={<ComponentsBorderBottom>
-            <Headers backLink child={
-                <div>
-                    <Menu />
-                </div>
-            }>
-                <div style={{width: "100%"}}>
-                    <Search />
-                </div>
-            </Headers>
-            <ImgAlt subtitle={"Hello, world!"} title={"Hello, world! and Example text"} content={i}  />
-            <Tags tags={tags} />
-      </ComponentsBorderBottom>} />
+      <Main>
+        <ComponentsBorderBottom>
+              <Headers backLink child={
+                  <div>
+                      <Menu />
+                  </div>
+              }>
+                  <div style={{width: "100%"}}>
+                      <Search />
+                  </div>
+              </Headers>
+              <ImgAlt subtitle={"Hello, world!"} title={"Hello, world! and Example text"} content={i}  />
+              <Tags tags={tags} />
+        </ComponentsBorderBottom>
+      </Main>
     </div>
   )
 }

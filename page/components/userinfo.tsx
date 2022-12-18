@@ -1,4 +1,4 @@
-import { TypeUser, TypeUserExample } from "../../lib/types/type"
+import { TypeUser, TypeUserExample } from "../lib/types/type"
 import { ButtonFollow, LinkBack } from "./components/components"
 import styles from "./sass/userinfo.module.scss"
 import UserIcon from "./usericon"

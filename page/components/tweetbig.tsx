@@ -1,4 +1,4 @@
-import { TypeTweet } from "../../lib/types/type"
+import { TypeTweet } from "../lib/types/type"
 import { ComponentsBorderBottom, TweetIconLeft, TweetIconLeftBorderEnd } from "./components/components"
 import styles from "./sass/tweet.module.scss"
 import TweetContent from "./tweetcontent"

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { TypeTweet } from "../../lib/types/type"
+import { TypeTweet } from "../lib/types/type"
 import { LinkBack, TweetIconLeft, TweetIconLeftBorder, TweetIconLeftBorderAll, TweetIconLeftBorderEnd } from "./components/components"
 import { IconRetweet } from "./components/icon"
 import styles from "./sass/tweet.module.scss"
@@ -52,8 +52,8 @@ const TweetReplays = ({
                 <TweetBottomOneLine tweet={tweet} />
             </TweetIconLeftBorder>
         </LinkBack>
-        {!!rep.length && rep.map((t) => (
-            <LinkBack href={`/@/${t.user.name}/${t.id}`}>
+        {!!rep.length && rep.map((t: TypeTweet, i:number) => (
+            <LinkBack key={i} href={`/@/${t.user.name}/${t.id}`}>
                 <TweetIconLeftBorderAll name={t.user_icon}>
                     <TweetTopOneLine tweet={t} />
                     <TweetText tweet={t} />

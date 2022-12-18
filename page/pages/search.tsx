@@ -1,17 +1,17 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import stylesMenu from "./components/sass/userprofile.module.scss"
-import { ComponentsBorderBottom } from './components/components/components'
-import TweetForm from './components/tweetform'
+import stylesMenu from "../components/sass/userprofile.module.scss"
+import { ComponentsBorderBottom } from '../components/components/components'
+import TweetForm from '../components/tweetform'
 import Main from './layout/main'
-import Headers from './components/headers'
+import Headers from '../components/headers'
 import { useEffect, useState } from 'react'
-import SearchBox from "./components/seatch"
+import SearchBox from "../components/seatch"
 import { useRouter } from 'next/router'
 import { TypeTweet } from '../lib/types/type'
 import { get, getUrl } from '../lib/utils/main'
-import Tweets from './components/tweets'
+import Tweets from '../components/tweets'
 
 const Menu = ({
     onTop = () => {},
@@ -69,20 +69,22 @@ export default function Search() {
     })
     return (
         <div>
-          <Main children={<>
-            <Headers backLink child={
-                <div style={{borderBottom: "1px solid #eee"}}>
-                    <Menu />
-                </div>
-            }>
-                <div style={{width: "100%"}}>
-                    <SearchBox />
-                </div>
-            </Headers>
-            <ComponentsBorderBottom>
-                <Tweets tweets={tweets} />
-            </ComponentsBorderBottom>
-            </>} />
+          <Main>
+            <>
+                <Headers backLink child={
+                    <div style={{borderBottom: "1px solid #eee"}}>
+                        <Menu />
+                    </div>
+                }>
+                    <div style={{width: "100%"}}>
+                        <SearchBox />
+                    </div>
+                </Headers>
+                <ComponentsBorderBottom>
+                    <Tweets tweets={tweets} />
+                </ComponentsBorderBottom>
+            </>
+          </Main>
         </div>
     )
 }

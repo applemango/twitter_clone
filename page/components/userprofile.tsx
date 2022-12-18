@@ -1,11 +1,11 @@
-import { TypeUser } from "../../lib/types/type"
+import { TypeUser } from "../lib/types/type"
 import UserHeader from "./userheader"
 
 import styles from "./sass/userprofile.module.scss"
 import componentsStyles from "./components/sass/components.module.scss"
 import { ButtonFollow, InputText, InputTextArea, Modals } from "./components/components"
 import { useEffect, useState } from "react"
-import { getUrl, post } from "../../lib/utils/main"
+import { getUrl, post } from "../lib/utils/main"
 import { useRouter } from "next/router"
 const IconCalender = () => <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-calendar-time" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><circle cx="18" cy="18" r="4" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg>
 
@@ -126,7 +126,7 @@ const UserProfileInfo = ({
             <p>{`joined ${user.joined}`}</p>
         </div>
         <UserProfileInfoFollower user={user} />
-        <p className={styles.info}>Not followed by anyone you're following</p>{/* what is thats */}
+        <p className={styles.info}>Not followed by anyone you&apos;re following</p>{/* what is thats */}
     </div>
 }
 

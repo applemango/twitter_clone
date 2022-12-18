@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import Messages from "./messages"
 
-import { TypeMessage } from "../../lib/types/type"
-import { get_messages } from "../../lib/res/messages"
+import { TypeMessage } from "../lib/types/type"
+import { get_messages } from "../lib/res/messages"
 import MessagesForm from "./messagesform"
 
 import styles from "./sass/messages.module.scss";
-import { getToken, isLoginAndLogin } from "../../lib/res/token"
+import { getToken, isLoginAndLogin } from "../lib/res/token"
 import Headers from "./headers"
 import Header from "./headers"
 

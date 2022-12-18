@@ -3,17 +3,17 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { TypeTweet } from '../lib/types/type'
 import styles from '../styles/Home.module.css'
-import { ComponentsBorderBottom } from './components/components/components'
-import Headers from './components/headers'
-import Timeline from './components/timeline'
-import TweetForm from './components/tweetform'
+import { ComponentsBorderBottom } from '../components/components/components'
+import Headers from '../components/headers'
+import Timeline from '../components/timeline'
+import TweetForm from '../components/tweetform'
 import Main from './layout/main'
 
 export default function Home() {
   const [tweets, setTweets] = useState<Array<TypeTweet>>([])
   return (
     <div>
-      <Main children={
+      <Main>
         <>
           <Headers menu={true}>
             <h1 style={{
@@ -29,7 +29,7 @@ export default function Home() {
             <Timeline tweets={tweets} setTweets={setTweets} />
           </ComponentsBorderBottom>}
         </>
-      } />
+      </Main>
     </div>
   )
 }
