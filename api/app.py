@@ -490,6 +490,19 @@ def socket_send_message_to_user(message):
     emit("message_from_user", msg.to_object_safe(), to=str(t.id))
     emit("message_to_user", msg.to_object_safe(), to=str(u.id))
 
+@socketIo.event
+def socket_tweets(message):
+    if not token_auth(request.args.get("token")):
+        raise RuntimeError("Token not found")
+    token_data = decode_token(request.args.get('token'))  # type: ignore
+    u: User = User.query.get(int(token_data["sub"]))
+    if not u:
+        return
+    followers = u.follower().all()
+    print(followers)
+    for follower in followers:
+        emit("tweet_notification",{"body": message["body"] or "Tweet", "from": message["from"], "icon": message["icon"], "id": message["id"]}, to=str(follower.id))
+
 ###########################
 ###########################
 ###########################
@@ -613,7 +626,7 @@ def get_tweets( # Alternative syntax for unions requires Python 3.10 or newer
             like=like,
         ),
         tag = tag
-    )
+    ).filter(Tweet.user_id != 5)
 
 def to_objects(data: list, user = None):
     if not len(data):

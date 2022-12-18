@@ -6,9 +6,16 @@ import styles from "./sass/tweetform.module.scss"
 import { post_tweet } from "../lib/res/tweet"
 import TweetContent from "./tweetcontent"
 import { getToken, parseJwt } from "../lib/res/token"
+import { io } from "socket.io-client"
 
 const IconPlanet = () => <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-planet" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#1EA1F1" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18.816 13.58c2.292 2.138 3.546 4 3.092 4.9c-.745 1.46 -5.783 -.259 -11.255 -3.838c-5.47 -3.579 -9.304 -7.664 -8.56 -9.123c.464 -.91 2.926 -.444 5.803 .805" /><circle cx="12" cy="12" r="7" /></svg>
 const IconDown = () => <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chevron-down" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#1EA1F1" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 9 12 15 18 9" /></svg>
+
+const socket = io("ws://192.168.1.2:6500", {
+    query : {
+        token: getToken()
+    }
+})
 
 const TweetForm = ({
     setTweets,
@@ -38,6 +45,9 @@ const TweetForm = ({
             <TweetFormTooltip onTweet={() => {
                 const r = async () => {
                     const res = await post_tweet(text, content, contentType)
+                    console.log(res)
+                    console.log("send")
+                    socket.emit("socket_tweets", {"body":res.text,"from": res.user.display_name || res.user.name,"icon": res.user.icon,"id": res.id, "token":getToken()})
                     if (setTweets)
                         setTweets((value: any) => [res, ...value])
                     if (onTweets)

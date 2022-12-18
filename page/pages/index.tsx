@@ -8,6 +8,7 @@ import Headers from '../components/headers'
 import Timeline from '../components/timeline'
 import TweetForm from '../components/tweetform'
 import Main from './layout/main'
+import Notification from '../components/notification'
 
 export default function Home() {
   const [tweets, setTweets] = useState<Array<TypeTweet>>([])

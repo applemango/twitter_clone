@@ -5,6 +5,7 @@ import HeaderNavigator from "../../components/headersnavigator"
 import MenuLeft from "../../components/menuleft"
 import MenuRight from "../../components/menuright"
 import styles from "./sass/main.module.scss"
+import Notification_ from "../../components/notification"
 const Main = ({
     children,
     right,
@@ -38,6 +39,7 @@ const Main = ({
             </div>
         </div>
         {navigator && <div><HeaderNavigator /></div>}
+        <Notification_ />
     </>
 }
 export default Main
