@@ -19,7 +19,7 @@ const MessagesChat = ({
     location: number
     setLocation?: Function
 }) => {
-    const [messages, setMessages] = useState<Array<TypeMessage>>()
+    const [messages, setMessages] = useState<Array<TypeMessage>>([])
     useEffect(() => {
         const r = async () => {
             if(location==-1)
@@ -27,7 +27,7 @@ const MessagesChat = ({
             const res = await get_messages(location)
             if(!res)
                 return
-            setMessages(res)
+            setMessages(res.reverse())
         }
         r()
     },[location])
@@ -55,7 +55,7 @@ const MessagesChat = ({
         </div>
     return <>
         <div className={styles.chat} style={{width: "calc(100% - 350px)"}}>
-            <Messages setLocation={setLocation} messages={messages} />
+            <Messages setMessages={setMessages} setLocation={setLocation} messages={messages} location={location} />
             <MessagesForm onSend={(e: string, c: string) => {
                 const r = async () => {
                     if(!e || !location)

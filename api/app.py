@@ -306,7 +306,7 @@ def route_tweet_get():
         like = request_arg_bool(request, "like"),
         tag = request_arg(request, "tag"),
         search = request_arg(request, "q"),
-    ), request_arg_int(request, "p"), request_arg_int(request, "limit"))
+    ), request_arg_int(request, "p") or 1, request_arg_int(request, "limit") or 5)
     return jsonify({"data": to_objects(tweets, User.query.get(request_user()))})
 
 @app.route("/tweets/<id>", methods=["GET"])
@@ -356,8 +356,8 @@ def route_tweet_id_like_post(id):
 def route_tweet_image_post():
     if "file" not in request.files:
         return jsonify("file not found"), 400
-    file = request.files["file"]
-    if file.filename == "":
+    file = request.files.get("file")
+    if not file or file.filename == "":
         return jsonify("file not fined"), 400
     if file.filename and file and allowed_file(file.filename):
         random_str = generate_random_str(15)
@@ -395,7 +395,12 @@ def route_messages_user_get():
 def route_messages_get(user):
     user = int(user)
     me = request_user()
-    messages = Message.query.filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me)).all()
+    messages = page(
+        Message.query.order_by(desc(Message.timestamp)) \
+            .filter(and_(Message.to == me,Message.send == user) | and_(Message.to == user,Message.send == me)),
+        request_arg_int(request, "p") or 1,
+        request_arg_int(request, "limit")
+    )
     return jsonify({"data": to_objects(messages)})
 
 @app.route("/user/<user>", methods=["GET"])

@@ -27,7 +27,7 @@ export const post_replay = async (id: number, text: string, content: string = ""
 
 export const get_tweet = async (start: number | string, end: number | string) => {
     try {
-        const res = await get(getUrl(`/tweets?start=${start}&end=${end}`))
+        const res = await get(getUrl(`/tweets`))
         return res.data.data
     } catch (e) {
         

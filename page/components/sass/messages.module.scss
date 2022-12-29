@@ -171,6 +171,7 @@
         }
     }
     .message {
+        word-break: break-all;
         background-color: #444;
         padding: 10px 16px;
         width: fit-content;

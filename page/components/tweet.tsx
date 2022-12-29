@@ -75,8 +75,11 @@ const TweetReplays = ({
 }
 
 const TweetText = ({tweet}:{tweet: TypeTweet}) => {
+    const text = tweet.text ? tweet.text.split("\n") : [""]
     return <div className={styles.text}>
-        <p>{tweet.text}</p>
+        {(text && text.length) && text.map((text: string, i: number) => (
+            <p key={i}>{text}</p>
+        ))}
     </div>
 }
 

@@ -17,6 +17,8 @@ export default function User() {
     const [tweets, setTweets] = useState<Array<TypeTweet>>([])
     const [user, setUser] = useState<TypeUser>(TypeUserExample())
     const router = useRouter()
+    const [hasMore, setHasMore] = useState(true)
+    const [now, setNow] = useState(1)
     const { name } = router.query
     const req = async (url: string) => {
       try {
@@ -25,12 +27,12 @@ export default function User() {
       } catch (e) {}
     }
     useEffect(() => {
-      const r = async () => {
+      /*const r = async () => {
         if(!name || Array.isArray(name))
           return
-        setTweets(await req(`/tweets?username=${name}&start=${0}&end=${10}`))
+        setTweets(await req(`/tweets?username=${name}?limit=${5}`))
       }
-      r()
+      r()*/
       const rs = async () => {
         if(!name || Array.isArray(name))
           return
@@ -76,7 +78,15 @@ export default function User() {
                   setTweets(await req(`/tweets?reply=true&like=true`))
                 }} />
               </>
-              <Tweets tweets={tweets} />
+              <Tweets hasMore={hasMore} loadMore={async () => {
+                const res = await get(getUrl(`/tweets?username=${name}&p=${now}&limit=${5}`))
+                if(!res || !res.data || !res.data.data)
+                    return
+                if(res.data.data.length < 5)
+                    setHasMore(false)
+                setNow(now => now + 1)
+                setTweets((tweets: any) => [...tweets, ...res.data.data])
+              }} tweets={tweets} />
             </ComponentsBorderBottom>}
           </>
         </Main>
