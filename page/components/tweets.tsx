@@ -7,18 +7,20 @@ const Tweets = ({
     tweets,
     filter,
     loadMore = () => {},
-    hasMore = false
+    hasMore = false,
+    pageStart = 0
 }:{
     tweets: Array<TypeTweet>,
     filter?: Function,
     loadMore?: Function,
     hasMore?: boolean,
+    pageStart?: number
 
 }) => {
     return <>
         <ComponentsBorderBottom>
             <InfiniteScroll
-                pageStart={2}
+                pageStart={pageStart || 2}
                 loadMore={async () => await loadMore()}
                 hasMore={hasMore}
                 useWindow={true}

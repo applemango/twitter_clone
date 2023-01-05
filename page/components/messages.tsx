@@ -31,6 +31,12 @@ const Messages = ({
             behavior: "smooth"
         })
     },[messages])
+    useEffect(() => {
+        if(location == -1)
+            return
+        setHasMore(true)
+        setLoadingMessages([])
+    },[location])
     return <div ref={ref} className={styles.messages}>
         <Header onBackClick={() => setLocation(-1)}>
           <h1 style={{

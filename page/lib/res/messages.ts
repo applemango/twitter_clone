@@ -12,7 +12,7 @@ export const get_messages_user = async () => {
 
 export const get_messages = async (id: number) => {
     try {
-        const res = await get(getUrl(`/messages/${id}`))
+        const res = await get(getUrl(`/messages/${id}?p=${1}&limit=${15}`))
         const msg:Array<TypeMessage> = res.data.data
         return msg
     } catch (e) {

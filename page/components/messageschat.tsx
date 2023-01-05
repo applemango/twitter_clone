@@ -35,12 +35,12 @@ const MessagesChat = ({
         socket.on("message_from_user", (msg: any) => {
             if (msg.to && msg.send && msg.to.id == msg.send.id)// me to me
                 return
-            if(messages && (messages[messages.length - 1].id == msg.id))
+            if(messages && messages.length && (messages[messages.length - 1].id == msg.id))
                 return
             setMessages((messages) => messages ? [...messages, msg]: [msg])
         })
         socket.on("message_to_user", (msg:any) => {
-            if(messages && (messages[messages.length - 1].id == msg.id))
+            if(messages && messages.length && (messages[messages.length - 1].id == msg.id))
                 return
             setMessages((messages) => messages ? [...messages, msg]: [msg])
         })

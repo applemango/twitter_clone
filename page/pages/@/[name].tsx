@@ -19,7 +19,14 @@ export default function User() {
     const router = useRouter()
     const [hasMore, setHasMore] = useState(true)
     const [now, setNow] = useState(1)
+    const [u, setUrl] = useState("/tweets?username={name}")
     const { name } = router.query
+    const url = (link: string, n?: number) => {
+      return link.replace("{name}", String(name))
+              .replace("{now}", String(n || now))
+              .replace("{limit}", String(5))
+              .concat(`&p=${n || now}&limit=${5}`)
+    }
     const req = async (url: string) => {
       try {
         const res = await get(getUrl(url))
@@ -69,22 +76,37 @@ export default function User() {
               <>
                 <UserProfile me={me} user={user} />
                 <UserProfileMenu onTweets={async () => {
-                  setTweets(await req(`/tweets?username=${name}`))
+                  setTweets(await req(url("/tweets?username={name}",1)/*`/tweets?username=${name}`*/))
+                  setUrl("/tweets?username={name}")
+                  setHasMore(true)
+                  setNow(1)
                 }} onMedia={async () => {
-                  setTweets(await req(`/tweets?username=${name}&media=true`))
+                  setTweets(await req(url("/tweets?username={name}&media=true",1)/*`/tweets?username=${name}&media=true`*/))
+                  setUrl("/tweets?username={name}&media=true")
+                  setHasMore(true)
+                  setNow(1)
                 }} onReply={async () => {
-                  setTweets(await req(`/tweets?username=${name}&reply=true`))
+                  setTweets(await req(url("/tweets?username={name}&reply=true",1)/*`/tweets?username=${name}&reply=true`*/))
+                  setUrl("/tweets?username={name}&reply=true")
+                  setHasMore(true)
+                  setNow(1)
                 }} onLikes={async () => {
-                  setTweets(await req(`/tweets?reply=true&like=true`))
+                  setTweets(await req(url("/tweets?reply=true&like=true",1)/*`/tweets?reply=true&like=true`*/))
+                  setUrl("/tweets?reply=true&like=true")
+                  setHasMore(true)
+                  setNow(1)
                 }} />
               </>
-              <Tweets hasMore={hasMore} loadMore={async () => {
-                const res = await get(getUrl(`/tweets?username=${name}&p=${now}&limit=${5}`))
+              <Tweets pageStart={2} hasMore={hasMore} loadMore={async () => {
+                if(!name)
+                  return
+                console.log(url(u, now), now)
+                const res = await get(getUrl(url(u, now)/*`/tweets?username=${name}&p=${now}&limit=${5}`*/))
                 if(!res || !res.data || !res.data.data)
                     return
                 if(res.data.data.length < 5)
                     setHasMore(false)
-                setNow(now => now + 1)
+                setNow(nows => nows + 1)
                 setTweets((tweets: any) => [...tweets, ...res.data.data])
               }} tweets={tweets} />
             </ComponentsBorderBottom>}
